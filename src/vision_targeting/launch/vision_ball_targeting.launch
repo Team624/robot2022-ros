@@ -1,0 +1,4 @@
+<launch>
+  <node pkg="vision_targeting" type="ball_detector.py" name="vision_ball_targeting"  output="screen">
+  </node>
+</launch>

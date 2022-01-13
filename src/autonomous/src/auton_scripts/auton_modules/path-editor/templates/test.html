@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Path Editor</title>
+</head>
+<body>
+    <figure>
+    <canvas class="myCanvas" id="myCanvas" width="200" height="200">
+        <script type="module">
+            import { Bezier } from "/static/js/bezier.js";
+            const b = new Bezier(150,40 , 80,30 , 105,150);
+            var x = document.getElementById("myCanvas");
+            var draw = function() {
+                x.drawSkeleton(curve);
+                x.drawCurve(curve);
+            }
+        </script>
+    </canvas>
+    </figure>
+</body>
+</html>

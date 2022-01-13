@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block head %}
+
+<title>Path Editor</title>
+{% endblock %}
+
+{% block body %}
+    <canvas class="mycanvas" id="mycanvas">
+        <script type="text/javascript" src="{{ url_for('static', filename='js/code_example.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='js/interaction.js') }}"></script>
+
+        <script type="module">
+            import { Bezier } from "/static/js/bezier.js";
+
+                // const cvs = document.getElementById("mycanvas");
+                // const size = 650;
+                // cvs.width  = size;
+                // cvs.height = size;
+                // let ctx = cvs.getContext("2d");
+
+                // // now do things. Like this:
+                var curve = new Bezier(100,25 , 10,90 , 110,100 , 150,195);
+                // const p = curve.points,
+                //     p1 = p[0],
+                //     p2 = p[1],
+                //     p3 = p[2],
+                //     p4 = p[3];
+
+                // // draw the curve
+                // ctx.strokeStyle = "#FF0000";
+                // ctx.beginPath();
+                // ctx.moveTo(p1.x,p1.y);
+                // ctx.bezierCurveTo(p2.x,p2.y, p3.x,p3.y, p4.x,p4.y);
+                // ctx.stroke();
+                var x = new CodeExample();
+                x.setColor("#FF0000");
+                x.drawSkeleton(curve);
+                x.drawCurve(curve);
+
+                handleInteraction(x.getCanvas(), curve).onupdate = evt => {
+                    x.reset();
+                    x.drawSkeleton(curve);
+                    x.drawCurve(curve);
+                };
+        </script>
+    </canvas>
+{% endblock %}
