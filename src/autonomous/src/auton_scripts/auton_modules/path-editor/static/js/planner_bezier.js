@@ -14,7 +14,7 @@ function createNewBezier(){
     x.setColor("#FF0000");
     x.drawSkeleton(curve);
     //x.drawCurve(curve);
-    var LUT = curve.getLUT(interval);
+    var LUT = curve.getLUT(autonData.paths[autonData.paths.length - 1].max_linear_speed);
     //console.log(LUT);
     autonData.paths[autonData.paths.length - 1].control_points = curve.points
     LUT.forEach(p =>
@@ -34,7 +34,7 @@ function createSavedBezier(e, index){
     x.setColor("#FF0000");
     x.drawSkeleton(curve);
     //x.drawCurve(curve);
-    var LUT = curve.getLUT(interval);
+    var LUT = curve.getLUT(e.max_linear_speed);
     LUT.forEach(p => x.drawCircle(p,2));
 
     bezierArray.push([curve, x]);
@@ -85,7 +85,7 @@ function addOnUpdateEvent(index)
                 
             element[1].drawSkeleton(element[0]);
             //element[1].drawCurve(element[0]);
-            var LUT = element[0].getLUT(interval);
+            var LUT = element[0].getLUT(autonData.paths[index].max_linear_speed);
             autonData.paths[index].control_points = element[0].points
             autonData.paths[index].goals = []
             LUT.forEach(p =>

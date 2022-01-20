@@ -4,7 +4,7 @@
 function addGoal(){
   var goalsData = autonData.paths;
   var goallength =goalsData.length + 1;
-  autonData.paths.push({"id":autonData.paths.length, "name":"Path " + autonData.paths.length + 1, "constants_kP":1.0, "constants_kA":6.0, "constants_kB":-0.8, "max_linear_speed":1.1, "min_linear_speed":0.1, "max_linear_acceleration":1E9, "linear_tolerance_outer":0.3, "linear_tolerance_inner":0.1, "max_angular_speed":2.0, "min_angular_speed":1.0, "max_angular_acceleration":1E9, "angular_tolerance_outer":0.2, "angular_tolerance_inner":0.1, "ignore_angular_tolerance":false, "forward_movement_only":false, "end_of_path_stop":true, "control_points":[], "goals": []})
+  autonData.paths.push({"id":autonData.paths.length, "name":"Path " + autonData.paths.length + 1, "constants_kP":5.0, "constants_kA":0.0, "constants_kB":0.0, "max_linear_speed":20.0, "min_linear_speed":0.1, "max_linear_acceleration":1E9, "linear_tolerance_outer":0.3, "linear_tolerance_inner":0.1, "max_angular_speed":2.0, "min_angular_speed":1.0, "max_angular_acceleration":1E9, "angular_tolerance_outer":0.2, "angular_tolerance_inner":0.1, "ignore_angular_tolerance":false, "forward_movement_only":false, "end_of_path_stop":true, "control_points":[], "goals": []})
   console.log("Added Goal to Path")
   console.log(autonData.paths)
   

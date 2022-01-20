@@ -27,7 +27,7 @@ function displayGoalLinear(x){
 
   var myMaxSpeed = document.createElement('H5');
   myMaxSpeed.id = "LinearGoalDataMaxSpeed" + x
-  myMaxSpeed.textContent = "Max Speed"
+  myMaxSpeed.textContent = "Interval"
   myMaxSpeed.className = "LinearGoalDataName"
 
   var myMaxSpeedInput = document.createElement('INPUT');
