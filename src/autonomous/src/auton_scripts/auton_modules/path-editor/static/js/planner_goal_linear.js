@@ -147,7 +147,7 @@ function displayGoalLinear(x){
 
   var myForMoveOnly = document.createElement('H5');
   myForMoveOnly.id = "LinearGoalDataForMoveOnly" + x
-  myForMoveOnly.textContent = "Forward Move Only"
+  myForMoveOnly.textContent = "Use Vision"
   myForMoveOnly.className = "LinearGoalDataName"
 
   var myForMoveOnlyInput = document.createElement('INPUT');

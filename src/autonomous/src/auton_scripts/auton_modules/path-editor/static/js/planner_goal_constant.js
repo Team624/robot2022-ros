@@ -27,7 +27,7 @@ function displayGoalConstants(x){
 
   var myKp = document.createElement('H5');
   myKp.id = "ConstantsGoalDataKp" + x
-  myKp.textContent = "Constant kP"
+  myKp.textContent = "Timing"
   myKp.className = "ConstantsGoalDataName"
 
   var myKpInput = document.createElement('INPUT');
@@ -51,7 +51,7 @@ function displayGoalConstants(x){
 
   var myKa = document.createElement('H5');
   myKa.id = "ConstantsGoalDataKa" + x
-  myKa.textContent = "Constant kA"
+  myKa.textContent = "Start Heading"
   myKa.className = "ConstantsGoalDataName"
 
   var myKaInput = document.createElement('INPUT');
@@ -75,7 +75,7 @@ function displayGoalConstants(x){
 
   var myKb = document.createElement('H5');
   myKb.id = "ConstantsGoalDataKb" + x
-  myKb.textContent = "Constant kB"
+  myKb.textContent = "End Heading"
   myKb.className = "ConstantsGoalDataName"
 
   var myKbInput = document.createElement('INPUT');
