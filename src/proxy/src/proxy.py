@@ -3,7 +3,7 @@
 import math
 from sys import path
 import rospy
-from std_msgs.msg import Float32, Bool, String
+from std_msgs.msg import Float32, Bool, String, Float32MultiArray
 import threading
 from geometry_msgs.msg import Twist
 from diff_drive.msg import Goal, GoalPath, Constants, Linear, Angular
@@ -66,6 +66,9 @@ class Proxy:
         # For sending path data
         rospy.Subscriber("/auto/paths", GoalPath, self._on_new_path)
 
+        # For resetting pose
+        rospy.Subscriber("/auto/robot_set_pose", Float32MultiArray, self._on_reset_pose)
+
     def subscribe(self, topic_name, data_type):
         """ This sets up the ros subscribers for incoming data """
         # Checks if subscriber exists, if not create one
@@ -95,13 +98,11 @@ class Proxy:
         """ This is the callback function for the subscribers """
         self._data[str(msg._connection_header["topic"])] = msg
 
+    def _on_reset_pose(self, msg):
+        self.table.putNumberArray("/pathTable/startPose", msg.data)
+
     def _on_new_path(self, msg):
         """ This is the callback function for the subscribers """
-        # path.constants.kP
-        # path.constants.kA
-        # path.constants.kB
-        # path.forward_movement_only
-        # pose.position.x
 
         self.table.putNumber("/pathTable/numPaths", path.number_of_paths)
 
