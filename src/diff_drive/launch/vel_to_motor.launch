@@ -1,0 +1,7 @@
+<launch>
+    <node pkg="diff_drive" type="diff_drive_vel_to_motor" name="diff_drive_vel_to_motor" output="screen">
+        <!-- <param name="body_width" value="0.5969"/>
+        <param name="wheel_diameter" value="0.1524"/> -->
+        <rosparam command="load" file="$(find diff_drive)/config/diff_drive.yaml"/>
+    </node>
+</launch>

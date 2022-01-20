@@ -1,0 +1,5 @@
+float64 max_linear_speed
+float64 min_linear_speed
+float64 max_linear_acceleration
+float64 linear_tolerance_outer
+float64 linear_tolerance_inner

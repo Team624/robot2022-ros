@@ -1,0 +1,6 @@
+float64 max_angular_speed
+float64 min_angular_speed
+float64 max_angular_acceleration
+float64 angular_tolerance_outer
+float64 angular_tolerance_inner
+bool ignore_angular_tolerance

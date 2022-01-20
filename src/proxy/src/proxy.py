@@ -1,9 +1,12 @@
 #! /usr/bin/env python
 
+import math
+from sys import path
 import rospy
 from std_msgs.msg import Float32, Bool, String
 import threading
 from geometry_msgs.msg import Twist
+from diff_drive.msg import Goal, GoalPath, Constants, Linear, Angular
 
 # Creates proxy node
 rospy.init_node('proxy')
@@ -47,7 +50,7 @@ class Proxy:
         table_name = rospy.get_param('~table_name', "SmartDashboard")
         self.table = NetworkTables.getTable(table_name)
 
-        self.update_rate = rospy.get_param('~rate', 15)
+        self.update_rate = rospy.get_param('~rate', 30)
 
         # A Dictionary of wanted topic name and data type
         self.input_data = rospy.get_param('~input_data', [])
@@ -59,6 +62,9 @@ class Proxy:
         # List of ROS publishers and subscribers to avoid calling one twice
         self._publishers = {}
         self._subscribers = []
+
+        # For sending path data
+        rospy.Subscriber("/auto/paths", GoalPath, self._on_new_path)
 
     def subscribe(self, topic_name, data_type):
         """ This sets up the ros subscribers for incoming data """
@@ -88,6 +94,64 @@ class Proxy:
     def _on_new_data(self, msg):
         """ This is the callback function for the subscribers """
         self._data[str(msg._connection_header["topic"])] = msg
+
+    def _on_new_path(self, msg):
+        """ This is the callback function for the subscribers """
+        # path.constants.kP
+        # path.constants.kA
+        # path.constants.kB
+        # path.forward_movement_only
+        # pose.position.x
+
+        self.table.putNumber("/pathTable/numPaths", path.number_of_paths)
+
+        index = 0
+        distances = []
+        while (index < len(path.goals)):
+            if (index == len(path.goals)-1):
+                distances.append(0)
+            else:
+                x_diff = path.goals[index].pose.position.x - path.goals[index + 1].pose.position.x
+                y_diff = path.goals[index].pose.position.y - path.goals[index + 1].pose.position.y
+                dist = math.sqrt(math.pow(x_diff, 2) + math.pow(y_diff, 2))
+                distances.append(dist)
+            index += 1
+        
+
+        # Modify first and last path to smoothly increase velocity
+        smooth_constant = 2.0 
+        distances[0] *= smooth_constant
+        distances[len(path.goals)-1] *= smooth_constant
+        total_dist = sum(distances)
+
+        times = []
+        headings = [path.constants.kA]
+        heading_diff = path.constants.kB - path.constants.kA
+        for distance in distances:
+            times.append((distance/total_dist) * path.constants.kP)
+            headings.append(headings[len(headings)-1] + heading_diff/(float)(len(path.goals)-1))
+        headings.pop(0)
+        headings.append(path.constants.kB)
+
+        index = 0
+        while (index < len(path.goals)):
+            if (index == len(path.goals)-1):
+                x_diff = 0
+                y_diff = 0
+                self.table.putNumber("/pathTable/path?/point!/Vx".replace("!", str(index)).replace("?", path.path_index), 0)
+                self.table.putNumber("/pathTable/path?/point!/Vy".replace("!", str(index)).replace("?", path.path_index), 0)
+            else:
+                x_diff = path.goals[index].pose.position.x - path.goals[index + 1].pose.position.x
+                y_diff = path.goals[index].pose.position.y - path.goals[index + 1].pose.position.y
+                self.table.putNumber("/pathTable/path?/point!/Vx".replace("!", str(index)).replace("?", path.path_index), x_diff/times[index])
+                self.table.putNumber("/pathTable/path?/point!/Vy".replace("!", str(index)).replace("?", path.path_index), y_diff/times[index])
+
+            self.table.putNumber("/pathTable/path?/numPoints".replace("?", path.path_index), len(path.goals))
+            self.table.putNumber("/pathTable/path?/point!/X".replace("!", str(index)).replace("?", path.path_index), path.goals[index].pose.position.x)
+            self.table.putNumber("/pathTable/path?/point!/Y".replace("!", str(index)).replace("?", path.path_index), path.goals[index].pose.position.y)
+            self.table.putNumber("/pathTable/path?/point!/Heading".replace("!", str(index)).replace("?", path.path_index), headings[index])
+            self.table.putBoolean("/pathTable/path?/point!/Vision".replace("!", str(index)).replace("?", path.path_index), path.forward_movement_only)
+            index += 1
 
     def main(self):
         """ This is the main loop """
