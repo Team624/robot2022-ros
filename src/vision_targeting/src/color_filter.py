@@ -1,26 +1,14 @@
 import cv2
-from matplotlib import pyplot as plt
 import numpy as np
-
 class ColorFilter:
-    def __init__(self):
-        pass
 
-    def color_filter(self, frame, color_low, color_high):
-        """ This filters the img based on hsv values """
-        
-        # Blurs for better contour detection
-        frame = cv2.GaussianBlur(frame, (5,5),0)
-        
-        # Converts from bgr to hsv img
-        hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+    def __init__(self, frame):
+        self.frame = frame
+        self.frame = cv2.GaussianBlur(self.frame, (3,3), 0)
 
-        # Max and min values to filter
-        lower_color = np.array(color_low)
-        upper_color = np.array(color_high)
-
-        # Filters the hsv values
-        mask = cv2.inRange(hsv,lower_color,upper_color)
-        
-        # Returns the filtered img
+    def convertToGreen(self):
+        hsv = cv2.cvtColor(self.frame, cv2.COLOR_BGR2HSV)
+        lower = np.array([34.32, 99.91, 107.88])
+        upper = np.array([95.625, 255, 255])
+        mask = cv2.inRange(hsv, lower, upper)    
         return mask

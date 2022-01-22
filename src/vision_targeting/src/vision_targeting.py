@@ -12,8 +12,9 @@ from std_msgs.msg import Float32, Float64, Bool
 from sensor_msgs.msg import Image, CompressedImage
 from cv_bridge import CvBridge, CvBridgeError
 
-from color_filter import ColorFilter
-from contour_detector import ContourDetect
+import data_gatherer
+import color_filter
+import ds
 
 rospy.init_node('vision_targeting', anonymous=True)
 class VisionTargeting:
@@ -24,66 +25,64 @@ class VisionTargeting:
     # ROS img msg
     # self.image_sub = rospy.Subscriber("d435/color/image_raw",Image,self.callback)
 
-    self.prime_sub = rospy.Subscriber("turret/primed", Bool,self.prime_callback)
+    # self.prime_sub = rospy.Subscriber("turret/primed", Bool,self.prime_callback)
     
-    # Rotation PID values
-    self.feedback_pub = rospy.Publisher("turret/feedback", Float32, queue_size=1)
-    self.setpoint_pub = rospy.Publisher("turret/setpoint", Float32, queue_size=1)
+    # # Rotation PID values
+    # self.feedback_pub = rospy.Publisher("turret/feedback", Float32, queue_size=1)
+    # self.setpoint_pub = rospy.Publisher("turret/setpoint", Float32, queue_size=1)
 
-    # This will be used to calculate hood angle and flywheel rpm
-    self.y_offset_pub = rospy.Publisher("turret/y_offset", Float32, queue_size=1)
+    # # This will be used to calculate hood angle and flywheel rpm
+    # self.y_offset_pub = rospy.Publisher("turret/y_offset", Float32, queue_size=1)
 
-    self.cf = ColorFilter()
-    self.cd = ContourDetect(rospy.get_param("~rotation_setpoint", 20))
+    self.cap = cv2.VideoCapture(2)
+    codec = 0X47504A4D
+    #self.cap.set(cv2.CAP_PROP_FPS,30)
+    #self.cap.set(cv2.CAP_PROP_FOURCC, codec)
+    self.cap.set(cv2.CAP_PROP_FRAME_WIDTH,1920/2)
+    self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT,1080/2)
+    #self.cap.set(cv2.CAP_PROP_EXPOSURE,-96/11)
+    self.dist = 0
+    self.focal = 450
+    self.pixels = 30
+    self.width = 4
+    self.distanceAngle = ds.Window()
+    self.rotationAngle = ds.Window()
 
-    # Subscribe to ros topic to tell if it should track
-    self.is_tracking = True
-
-  def prime_callback(self,data):
-    """ This lets the node know if it should be tracking """
-    self.is_tracking = data
-
-  # def callback(self,data):
-  #   """ This runs when a new img frame is detected """
-  #   try:
-  #     cv_image = self.bridge.imgmsg_to_cv2(data, "bgr8")
-  #   except CvBridgeError as e:
-  #     print(e)
+  def get_dist(self, rectangle_params):
+    # find no of pixels covered
+    pixels = rectangle_params[1][0]
+    # calculate distance
+    dist = (self.width*self.focal)/pixels
+    return dist
 
   def main(self):
     try:
-      r = rospy.Rate(20)
-
-      cap = cv2.VideoCapture(0)
+      r = rospy.Rate(50)
       while not rospy.is_shutdown():
-        ret, cv_image = cap.read()
-       # cv2.imshow("Image",cv_image)
-        # Color Filter the Video Stream (For Green)
-	
-	#cv2.imshow("Mask",cv_image)
-
-        mask = self.cf.color_filter(cv_image, rospy.get_param("~low_hsv", [0,0,0]), rospy.get_param("~high_hsv", [0,0,0]))
-
-        # Passes the mask to contour detector
-        self.cd.contour_detect(mask.copy(), self.is_tracking)
-
-
-        # Pid values for rotation
-        r_feedback = Float32()
-        r_setpoint = Float32()
-
-        # This will be used to calculate hood angle and flywheel rpm
-        y_offset = Float32()
-
-        r_feedback.data = self.cd.get_rotation_pid()
-        r_setpoint.data = rospy.get_param("~rotation_setpoint", 0)
-
-        y_offset.data = self.cd.y_offset
-
-        self.feedback_pub.publish(r_feedback)
-        self.setpoint_pub.publish(r_setpoint)
-
-        self.y_offset_pub.publish(y_offset)
+        success, img=self.cap.read()
+        height, width, _ = img.shape
+        
+        center_x, center_y = width/2, height/2
+        mask = color_filter.ColorFilter(img).convertToGreen()
+        dataCollector = data_gatherer.DataGatherer(mask)
+        averageCenter = dataCollector.getAverageCenter()
+        if averageCenter is not None:
+            #casting 
+            averageCenter[0]=int(averageCenter[0])
+            averageCenter[1]=int(averageCenter[1])
+            averageCenter=(averageCenter[0], averageCenter[1])
+            img=cv2.circle(img, averageCenter, 10, (0,0,255),-1)
+            angle = dataCollector.getAngleAdvanced(averageCenter, center_x, height, width)
+            self.rotationAngle.add(angle)
+            left, right = dataCollector.getExtremes()
+            leftAngle, rightAngle = dataCollector.getAngle(left, center_x, height), dataCollector.getAngle(right, center_x, height)
+            if (left[0]>width/2 and right[0]>width/2) or (left[0]<width/2 and right[0]<width/2):
+                self.distanceAngle.add(abs(leftAngle-rightAngle))
+            else:
+                self.distanceAngle.add(leftAngle+rightAngle)
+            print(str(self.rotationAngle.getAverage())+" : "+str(self.distanceAngle.getAverage()))
+        cv2.imshow('Contour Drawing', mask)
+        cv2.imshow('Image', img)
 
         cv2.waitKey(3)
         # Sleeps to meet specified rate
