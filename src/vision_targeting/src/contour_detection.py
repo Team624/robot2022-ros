@@ -1,7 +1,8 @@
 import cv2
 import color_filter
+import rospy
 class ContourDetection:
-    def __init__(self, image, minArea = 10):
+    def __init__(self, image, minArea = rospy.get_param("~min_area", 10)):
         self.mask = image
         self.minArea = minArea
 

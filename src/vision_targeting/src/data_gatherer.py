@@ -1,6 +1,7 @@
 import cv2
 import math
 import contour_detection
+import rospy
 
 class DataGatherer:
     def __init__(self, image):
@@ -22,7 +23,7 @@ class DataGatherer:
         x2, y2 = p2[0], p2[1]
         return abs((x1-x2)**2+(y1-y2)**2)**.5
     def getAverageCenter(self):
-        self.contours = self.getBestContours(40)
+        self.contours = self.getBestContours(rospy.get_param("~tolerance", 40))
         if len(self.contours)<3:
             return None
         totalX=0
@@ -35,10 +36,6 @@ class DataGatherer:
 
     def get_x_offset(self, x, wanted_x):
         return x - (wanted_x)
-
-    def get_y_offset(self, y, height):
-        y_offset = y - (height/2)
-        return ((263.95) / (1.0 + ( 46.8851 * math.pow(math.e, -0.008061 * y_offset) )) ) + 4.88508
 
     def inRange(self, x, minX, maxX):
         return minX<=x and x<=maxX

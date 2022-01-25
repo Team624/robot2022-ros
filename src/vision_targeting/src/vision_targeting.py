@@ -28,8 +28,8 @@ class VisionTargeting:
     # self.prime_sub = rospy.Subscriber("turret/primed", Bool,self.prime_callback)
     
     # # Rotation PID values
-    # self.feedback_pub = rospy.Publisher("turret/feedback", Float32, queue_size=1)
-    # self.setpoint_pub = rospy.Publisher("turret/setpoint", Float32, queue_size=1)
+    self.rotation_pub = rospy.Publisher("/vision/rotationAngle", Float32, queue_size=1)
+    self.distance_pub = rospy.Publisher("/vision/distanceAngle", Float32, queue_size=1)
 
     # # This will be used to calculate hood angle and flywheel rpm
     # self.y_offset_pub = rospy.Publisher("turret/y_offset", Float32, queue_size=1)
@@ -45,8 +45,12 @@ class VisionTargeting:
     self.focal = 450
     self.pixels = 30
     self.width = 4
-    self.distanceAngle = ds.Window()
-    self.rotationAngle = ds.Window()
+    self.distanceAngle = ds.Window(maxLen=rospy.get_param("~distance_window_size", 5))
+    self.rotationAngle = ds.Window(maxLen=rospy.get_param("~rotation_window_size", 5))
+
+    # When to publish 180 rotation to find target
+    self.find_target_thresh = rospy.get_param("~find_target_thresh", 40)
+    self.find_target_ind = 0 
 
   def get_dist(self, rectangle_params):
     # find no of pixels covered
@@ -57,7 +61,7 @@ class VisionTargeting:
 
   def main(self):
     try:
-      r = rospy.Rate(50)
+      r = rospy.Rate(rospy.get_param("~rate", 50))
       while not rospy.is_shutdown():
         success, img=self.cap.read()
         height, width, _ = img.shape
@@ -67,6 +71,8 @@ class VisionTargeting:
         dataCollector = data_gatherer.DataGatherer(mask)
         averageCenter = dataCollector.getAverageCenter()
         if averageCenter is not None:
+            self.find_target_ind = 0
+            
             #casting 
             averageCenter[0]=int(averageCenter[0])
             averageCenter[1]=int(averageCenter[1])
@@ -80,9 +86,26 @@ class VisionTargeting:
                 self.distanceAngle.add(abs(leftAngle-rightAngle))
             else:
                 self.distanceAngle.add(leftAngle+rightAngle)
-            print(str(self.rotationAngle.getAverage())+" : "+str(self.distanceAngle.getAverage()))
-        cv2.imshow('Contour Drawing', mask)
-        cv2.imshow('Image', img)
+
+            #print(str(self.rotationAngle.getAverage())+" : "+str(self.distanceAngle.getAverage()))
+
+            rot_data = Float32()
+            rot_data.data = self.rotationAngle.getAverage()
+
+            distance_data = Float32()
+            distance_data.data = self.distanceAngle.getAverage()
+
+            self.rotation_pub.publish(rot_data)
+            self.distance_pub.publish(distance_data)
+        else:
+            self.find_target_ind+=1
+            if (self.find_target_ind > self.find_target_thresh):
+              rot_data = Float32()
+              rot_data.data = 180
+              self.rotation_pub.publish(rot_data)
+
+        # cv2.imshow('Contour Drawing', mask)
+        # cv2.imshow('Image', img)
 
         cv2.waitKey(3)
         # Sleeps to meet specified rate
