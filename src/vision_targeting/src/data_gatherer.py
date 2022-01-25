@@ -41,7 +41,6 @@ class DataGatherer:
         return minX<=x and x<=maxX
 
     def getBestContours(self, tolerance):
-        
         variation = self.h/tolerance
         data, newData = [], []
         centers = self.getCenters()

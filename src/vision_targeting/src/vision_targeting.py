@@ -34,7 +34,7 @@ class VisionTargeting:
     # # This will be used to calculate hood angle and flywheel rpm
     # self.y_offset_pub = rospy.Publisher("turret/y_offset", Float32, queue_size=1)
 
-    self.cap = cv2.VideoCapture(2)
+    self.cap = cv2.VideoCapture(0)
     codec = 0X47504A4D
     #self.cap.set(cv2.CAP_PROP_FPS,30)
     #self.cap.set(cv2.CAP_PROP_FOURCC, codec)
