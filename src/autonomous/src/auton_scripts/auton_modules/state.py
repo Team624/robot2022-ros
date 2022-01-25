@@ -127,12 +127,6 @@ class SetIdle(State):
         self.ros_node.publish("/auto/shooter/state", String, shooter_state, latching = True)
         rospy.loginfo("Shooter Idle")
 
-        # Turret idle
-        turret_state = String()
-        turret_state.data = "idle"
-        self.ros_node.publish("/auto/turret/state", String, turret_state, latching = True)
-        rospy.loginfo("Turret Idle")
-
         # Flywheel idle
         flywheel_state = String()
         flywheel_state.data = "idle"
@@ -149,42 +143,11 @@ class SetIdle(State):
 
 class StartPath(State):
 
-    # Conditions
-    def started_path(self):
-        """ This checks if the robot has recieved the path """
-        if self.ros_node.get_data('/diff_drive/path_achieved') is None:
-            return False
-        return not self.ros_node.get_data('/diff_drive/path_achieved')
-    
-    def turn(self,radians):
-        self.ros_node.publish('/turn/setpoint', Float32, radians, latching = True)
-        self.ros_node.publish('/turning', Bool, True, latching = True)
-    
-    def stop_turn(self):
-        self.ros_node.publish('/turning', Bool, False, latching = True)
-
     # Actions
-    def publish_path(self, name):
+    def start_path(self, index):
         """ This gets the path data from the json file and publishes to diff_drive """
         # Checks for updated data
-        read_json()
-
-        global data
-
-        # Loops through the specified auton and checks for the path name
-        for auton in data:
-            if (auton.title == self.ros_node.auton_title):
-                for path in auton.paths:
-                    if path.name == name:
-                        a = []
-                        for goal in path.goals:
-                            a.append(goal.get_goal())
-                        self.ros_node.publish('/diff_drive/goal_path', GoalPath, path.get_path(a), latching = True)
-                        rospy.loginfo("Published Path, with the name '%s'", name)
-                        return
-                rospy.logerr("Publishing Path Failed. Did not find a path named '%s' in the data file", name)
-                return
-        rospy.logerr("Publishing Path Failed. Did not find auton titled '%s' in the data file", self.ros_node.auton_title)
+        self.ros_node.publish("/pathTable/startPathIndex", Float32, index, latching = True)
 
 # This is ROBOT SPECIFIC
 class Intake(State):
@@ -234,42 +197,6 @@ class Shooter(State):
         self.ros_node.publish("/auto/shooter/state", String, shooter_state, latching = True)
         rospy.loginfo("Shooter Shooting")
 
-class Turret(Shooter):
-
-    # Conditions
-    def reached_angle(self, angle, tol):
-        """ Checks if the turret has reached the given angle """
-        if self.ros_node.get_data("/auto/turret/current/angle") is None:
-            rospy.logerr("The topic /auto/turret/current/angle has not been published yet")
-        else:
-            neg_angle_diff = self.wrap_angle(self.ros_node.get_data("/auto/turret/current/angle") - angle)
-            pos_angle_diff = self.wrap_angle(angle - self.ros_node.get_data("/auto/turret/current/angle"))
-
-            if pos_angle_diff <= tol or neg_angle_diff <= tol:
-                return True
-        return False
-
-    # Actions (Only works if Shooter is in idle)
-    def idle_turret(self):
-        """ This puts the turret into idle mode """
-        turret_state = String()
-        turret_state.data = "idle"
-
-        self.ros_node.publish("/auto/turret/state", String, turret_state, latching = True)
-        rospy.loginfo("Turret Idle")
-
-    def rotate_turret(self, angle):
-        """ This rotates the turret to a specified angle """
-        turret_state = String()
-        turret_state.data = "rotate_turret"
-
-        turret_angle = Float32()
-        turret_angle.data = angle
-
-        self.ros_node.publish("/auto/turret/state", String, turret_state, latching = True)
-        self.ros_node.publish("/auto/turret/wanted/angle", Float32, turret_angle, latching = True)
-        rospy.loginfo("Turret Rotate")
-
 class Flywheel(Shooter):
 
     # Conditions
@@ -302,13 +229,6 @@ class Flywheel(Shooter):
 
 class Hood(Shooter):
 
-    # Conditions
-    def reached_angle(self, angle):
-        """ Checks if the turret has reached the given angle """
-        if self.ros_node.get_data("/auto/hood/current/angle") == angle:
-            return True
-        return False
-
     # Actions (Only works if Shooter is in idle)
     def idle_hood(self):
         """ This puts the hood into idle mode """
@@ -318,14 +238,10 @@ class Hood(Shooter):
         self.ros_node.publish("/auto/hood/state", String, hood_state, latching = True)
         rospy.loginfo("Hood Idle")
 
-    def rotate_hood(self, angle):
+    def actuate_hood(self, angle):
         """ This adjusts the hood to the given angle """
         hood_state = String()
-        hood_state.data = "rotate_hood"
-
-        hood_angle = Float32()
-        hood_angle.data = angle
+        hood_state.data = "actuate"
 
         self.ros_node.publish("/auto/hood/state", String, hood_state, latching = True)
-        self.ros_node.publish("/auto/hood/wanted/angle", Float32, hood_angle, latching = True)
-        rospy.loginfo("Hood Rotate")
+        rospy.loginfo("Hood Actuate")

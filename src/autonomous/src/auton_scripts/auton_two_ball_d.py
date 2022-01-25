@@ -11,9 +11,10 @@ from diff_drive.msg import Goal, GoalPath, Constants, Linear, Angular, BoolArray
 from auton_modules.state import SetIdle, State, StartPath, Intake, Shooter, Turret, Hood, Flywheel
 
 # The id of the auton, used for picking auton
-auton_id = 2
-auton_title = "Auton Standard"
+auton_id = 10
+auton_title = "Auton Blank"
 
+# Start of our states
 class Idle(SetIdle):
     """
     The state which waits for autonomous to start
@@ -27,85 +28,6 @@ class Idle(SetIdle):
         self.setIdle()
 
     def tick(self):
-        return RotateTurret(self.ros_node)
-
-class RotateTurret(Turret):
-    """
-    The state which publishes the first path to follow
-    """
-
-    def initialize(self):
-        self.log_state()
-
-    def execute_action(self):
-        self.rotate_turret(-90.0)
-
-    def tick(self):
-        return FlyWheelSpin(self.ros_node)
-
-class FlyWheelSpin(Flywheel):
-    """
-    The state which publishes the first path to follow
-    """
-
-    def initialize(self):
-        self.log_state()
-
-    def execute_action(self):
-        self.start_spin_up(0.5)
-
-    def tick(self):
-        if self.check_timer(1.5):
-            return Prime(self.ros_node)
-        return self
-
-class Prime(Flywheel):
-    """
-    The state which publishes the first path to follow
-    """
-
-    def initialize(self):
-        self.log_state()
-
-    def execute_action(self):
-        self.idle_flywheel()
-        self.start_prime()
-
-    def tick(self):
-        if self.check_timer(2.5):
-            return Shoot(self.ros_node)
-        return self
-
-class Shoot(Turret):
-    """
-    The state which publishes the first path to follow
-    """
-
-    def initialize(self):
-        self.log_state()
-
-    def execute_action(self):
-        self.start_shoot()
-
-    def tick(self):
-        if self.check_timer(3.5):
-            self.idle_turret()
-            return StopShoot(self.ros_node)
-        return self
-
-class StopShoot(Flywheel):
-    """
-    The state which publishes the first path to follow
-    """
-
-    def initialize(self):
-        self.log_state()
-
-    def execute_action(self):
-        self.idle()
-        self.start_spin_up(0.5)
-
-    def tick(self):
         return StartFirstPath(self.ros_node)
 
 class StartFirstPath(StartPath):
@@ -117,11 +39,26 @@ class StartFirstPath(StartPath):
         self.log_state()
 
     def execute_action(self):
-        self.publish_path("Path 01")
+        pass
 
     def tick(self):
-        return Final(self.ros_node)
+        if self.check_timer(2):
+            return Blank(self.ros_node)
+        return self
 
+class Blank(Intake):
+    """
+    The state which waits for the second waypoint of the path.
+    """
+
+    def initialize(self):
+        self.log_state()
+
+    def execute_action(self):
+        pass
+
+    def tick(self):
+        return self
 
 class Final(State):
     """
@@ -165,6 +102,3 @@ def start(ros_node):
 
     # Return the wanted Start and Shutdown state
     return Idle, Shutdown
-
-
-

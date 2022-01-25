@@ -6,27 +6,18 @@ server_ip: "10.06.24.2"
 table_name: "SmartDashboard"
 
 # Wanted Output Data ("number", "string", "boolean")
-output_data: [{name: "/cmd_vel/left", type: "number", default: 0.0},
-              {name: "/cmd_vel/right", type: "number", default: 0.0}, 
-              {name: "/turret/cmd_vel", type: "number", default: 0.0}, 
-              {name: "/turret/y_offset", type: "number", default: 0.0},
-              {name: "/auto/shooter/state", type: "string", default: "idle"},
+output_data: [{name: "/auto/shooter/state", type: "string", default: "idle"},
               {name: "/auto/flywheel/state", type: "string", default: "idle"},
-              {name: "/auto/turret/state", type: "string", default: "idle"},
               {name: "/auto/hood/state", type: "string", default: "idle"},
               {name: "/auto/flywheel/wanted/rpm", type: "number", default: 0.0},
-              {name: "/auto/hood/wanted/angle", type: "number", default: 0.0},
-              {name: "/auto/turret/wanted/angle", type: "number", default: 0.0}, 
+              {name: "/pathTable/startPathIndex", type: "number", default: -1.0},
+              {name: "/vision/rotationAngle", type: "number", default: 0.0},
+              {name: "/vision/distanceAngle", type: "number", default: 0.0},
               {name: "/auto/intake/state", type: "string", default: "retract"}]
 
 # Wanted Input Data ("number", "string", "boolean")
 input_data: [{name: "/auto/state", type: "boolean", default: false}, 
              {name: "/auto/select", type: "number", default: 0.0},
-             {name: "/enc/left", type: "number", default: 0.0},
-             {name: "/enc/right", type: "number", default: 0.0},
-             {name: "/navx/imu", type: "number", default: 0.0},
-             {name: "/xvel", type: "number", default: 0.0},
-             {name: "/turret/primed", type: "boolean", default: true},
-             {name: "/auto/flywheel/current/rpm", type: "number", default: 0.0},
-             {name: "/auto/hood/current/angle", type: "number", default: 0.0},
-             {name: "/auto/turret/current/angle", type: "number", default: 0.0}]
+             {name: "/pose/imu", type: "number", default: 0.0},
+             {name: "/pose/x", type: "number", default: 0.0},
+             {name: "/pose/y", type: "number", default: 0.0}]

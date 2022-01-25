@@ -11,7 +11,7 @@ from diff_drive.msg import Goal, GoalPath, Constants, Linear, Angular, BoolArray
 from auton_modules.state import SetIdle, State, StartPath, Intake, Shooter, Turret, Hood, Flywheel
 
 # The id of the auton, used for picking auton
-auton_id = 1
+auton_id = 10
 auton_title = "Auton Blank"
 
 # Start of our states
@@ -39,12 +39,11 @@ class StartFirstPath(StartPath):
         self.log_state()
 
     def execute_action(self):
-        self.turn(1.7)
+        self.start_path(0)
 
     def tick(self):
-        if self.started_path():
+        if self.check_timer(2):
             return Blank(self.ros_node)
-
         return self
 
 class Blank(Intake):
