@@ -1,14 +1,13 @@
 import rospy
 from std_msgs.msg import Float32, Float64, Bool
 from geometry_msgs.msg import Twist
-import tf
 from geometry_msgs.msg import PoseWithCovarianceStamped, PoseStamped, Pose
 from nav_msgs.msg import Odometry, Path
 import time
 from auton_modules.path import AutoPath, AutoGoal
 from diff_drive.msg import Goal, GoalPath, Constants, Linear, Angular, BoolArray
 
-from auton_modules.state import SetIdle, State, StartPath, Intake, Shooter, Turret, Hood, Flywheel
+from auton_modules.state import SetIdle, State, StartPath, Intake, Shooter, Hood, Flywheel
 
 # The id of the auton, used for picking auton
 auton_id = 10

@@ -6,7 +6,6 @@
     </node>    
 
     <include file="$(find autonomous)/launch/autonomous.launch" />
-    <include file="$(find autonomous)/launch/path_editor.launch" />
     <!-- Checked -->
     <include file="$(find robot_pid)/launch/robot_pid.launch" />
     <!-- Checked -Fix vision targetting file from unity -->
