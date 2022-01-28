@@ -2,15 +2,11 @@
 from __future__ import print_function
 
 import cv2
-from matplotlib import pyplot as plt
-import numpy as np
 import roslib
 import sys
 import rospy
 from std_msgs.msg import String
 from std_msgs.msg import Float32, Float64, Bool
-from sensor_msgs.msg import Image, CompressedImage
-from cv_bridge import CvBridge, CvBridgeError
 
 import data_gatherer
 import color_filter
@@ -20,8 +16,6 @@ rospy.init_node('vision_targeting', anonymous=True)
 class VisionTargeting:
 
   def __init__(self):
-    self.bridge = CvBridge()
-
     # ROS img msg
     # self.image_sub = rospy.Subscriber("d435/color/image_raw",Image,self.callback)
 

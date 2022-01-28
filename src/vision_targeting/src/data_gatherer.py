@@ -6,7 +6,7 @@ import rospy
 class DataGatherer:
     def __init__(self, image):
         self.contours = contour_detection.ContourDetection(image).getContours()
-        self.w, self.h, _=image.shape
+        self.w, self.h =image.shape
 
     def getCenters(self):
         mainCountors = self.contours

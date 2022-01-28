@@ -12,7 +12,7 @@ class ContourDetection:
         edges=None
         # for i in range(3,7, 2):
         edges = cv2.Canny(mask,100, 150, apertureSize=5)
-        cv2.imshow("Canny", edges)
+        #cv2.imshow("Canny", edges)
         _, contours, _= cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         newContours = []
         for contour in contours:

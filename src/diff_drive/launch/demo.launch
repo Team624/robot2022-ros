@@ -1,8 +1,0 @@
-<launch>
-
-  <node name="diff_drive_go_to_goal" pkg="diff_drive" type="diff_drive_go_to_goal" output="screen">
-    <rosparam command="load" file="$(find diff_drive)/config/diff_drive.yaml"/>
-    <remap from="odom" to="robot_pose_ekf/odom_combined"/>
-  </node>
-
-</launch>
