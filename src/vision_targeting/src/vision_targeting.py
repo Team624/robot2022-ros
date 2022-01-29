@@ -32,8 +32,8 @@ class VisionTargeting:
     codec = 0X47504A4D
     #self.cap.set(cv2.CAP_PROP_FPS,30)
     #self.cap.set(cv2.CAP_PROP_FOURCC, codec)
-    self.cap.set(cv2.CAP_PROP_FRAME_WIDTH,1920/2)
-    self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT,1080/2)
+    self.cap.set(cv2.CAP_PROP_FRAME_WIDTH,1920/3)
+    self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT,1080/3)
     #self.cap.set(cv2.CAP_PROP_EXPOSURE,-96/11)
     self.dist = 0
     self.focal = 450
@@ -89,13 +89,14 @@ class VisionTargeting:
             distance_data = Float32()
             distance_data.data = self.distanceAngle.getAverage()
 
+            print(rot_data.data)
             self.rotation_pub.publish(rot_data)
             self.distance_pub.publish(distance_data)
         else:
             self.find_target_ind+=1
             if (self.find_target_ind > self.find_target_thresh):
               rot_data = Float32()
-              rot_data.data = 180
+              rot_data.data = 60
               self.rotation_pub.publish(rot_data)
 
         # cv2.imshow('Contour Drawing', mask)

@@ -1,5 +1,5 @@
 rate: 50
-lower_hsv: [34.32, 99.91, 107.88]
+lower_hsv: [34.32, 200, 107.88]
 higher_hsv: [95.625, 255, 255]
 tolerance: 40
 min_area: 10

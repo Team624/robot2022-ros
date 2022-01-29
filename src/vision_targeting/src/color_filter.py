@@ -5,7 +5,7 @@ class ColorFilter:
 
     def __init__(self, frame):
         self.frame = frame
-        self.frame = cv2.GaussianBlur(self.frame, (3,3), 0)
+        #self.frame = cv2.GaussianBlur(self.frame, (3,3), 0)
 
     def convertToGreen(self):
         hsv = cv2.cvtColor(self.frame, cv2.COLOR_BGR2HSV)
