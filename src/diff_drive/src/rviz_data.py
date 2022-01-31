@@ -15,7 +15,7 @@ class RvizData:
 
     def __init__(self):
 
-        self.update_rate = rospy.get_param('~rate', 10)
+        self.update_rate = rospy.get_param('~rate', 30)
 
         # A Dictionary of wanted topic name and data type
         self.input_data = rospy.get_param('~input_data', [])
@@ -91,14 +91,19 @@ class RvizData:
         self.subscribe("/pose/y", Float32)
         self.subscribe("/pose/th", Float32)
         while not rospy.is_shutdown():
-            odom = PoseStamped()
+            odom = Odometry()
             odom.header.frame_id = "map"
 
-            odom.pose.position.x = 5
-            odom.pose.position.y = 5
-            odom.pose.orientation = quaternion_from_euler(0,0,3)
+            if ((self.get_data("/pose/x") or self.get_data("/pose/x") or self.get_data("/pose/x")) is not None):
+                odom.pose.position.x = self.get_data("/pose/x")
+                odom.pose.position.y = self.get_data("/pose/y")
+                quat = quaternion_from_euler(0,0,self.get_data("/pose/th"))
+                odom.pose.pose.orientation.x = quat[0]
+                odom.pose.pose.orientation.y = quat[1]
+                odom.pose.pose.orientation.z = quat[2]
+                odom.pose.pose.orientation.w = quat[3]
 
-            self.publish("/rviz/odom", PoseStamped, odom)
+            self.publish("/rviz/odom", Odometry, odom)
             # Sleeps to meet specified rate
             r.sleep()
 
