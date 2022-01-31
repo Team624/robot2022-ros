@@ -1,0 +1,4 @@
+<launch>
+  <node pkg="diff_drive" type="rviz_data.py" name="rviz_data"  output="screen">
+  </node>
+</launch>

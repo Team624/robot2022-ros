@@ -144,13 +144,18 @@ class ROSNode:
                                     a = []
                                     for goal in path.goals:
                                         a.append(goal.get_goal())
-                                    self.publish("/auto/paths", GoalPath, path.get_path(a), latching = True)
-                                    rospy.loginfo("Published Path, with the name '%s'", path.name)
+
+                                    path_data = path.get_path(a)
+                                    path_data.number_of_paths = len(auto.paths)
+                                    
+                                    path_data.path_index = path.id
+                                    self.publish("/auto/paths", GoalPath, path_data, latching = True)
+                                    #rospy.loginfo("Published Path, with the name '%s'", path.name)
 
                                 # Todo add this as a seperate subscriber to the proxy
                                 msg.data = auto.start_pose
                                 self.publish("/auto/robot_set_pose", Float32MultiArray, msg, latching = True)
-                                rospy.loginfo_throttle(10, "Reset Robot Pose")
+                                #rospy.loginfo_throttle(10, "Reset Robot Pose")
                                 break
 
             # Ticker state machine if one then sleep until next loop

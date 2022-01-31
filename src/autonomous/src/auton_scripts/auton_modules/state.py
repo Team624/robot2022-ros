@@ -19,7 +19,7 @@ def read_json():
         file_path = rospack.get_path('autonomous') + "/src/auton_scripts/auton_modules/path-editor/data.txt"
         with open(file_path) as json_file:
             json_data = json.load(json_file)
-            
+
             new_data = []
             for d in json_data:
                 a = Autons(len(new_data))

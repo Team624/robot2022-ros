@@ -18,6 +18,6 @@ output_data: [{name: "/auto/shooter/state", type: "string", default: "idle"},
 # Wanted Input Data ("number", "string", "boolean")
 input_data: [{name: "/auto/state", type: "boolean", default: false}, 
              {name: "/auto/select", type: "number", default: 0.0},
-             {name: "/pose/imu", type: "number", default: 0.0},
+             {name: "/pose/th", type: "number", default: 0.0},
              {name: "/pose/x", type: "number", default: 0.0},
              {name: "/pose/y", type: "number", default: 0.0}]
