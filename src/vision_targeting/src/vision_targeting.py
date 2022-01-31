@@ -89,7 +89,7 @@ class VisionTargeting:
             distance_data = Float32()
             distance_data.data = self.distanceAngle.getAverage()
 
-            print(rot_data.data)
+            #print(rot_data.data)
             self.rotation_pub.publish(rot_data)
             self.distance_pub.publish(distance_data)
         else:

@@ -135,18 +135,17 @@ class ROSNode:
                         for auto in state.data:
                             if auto.title == auton.auton_title:
                                 # So that it doesnt publish the path more than once
-                                self.current_auto_select = self.get_data(self.auto_select_topic)
+                                # self.current_auto_select = self.get_data(self.auto_select_topic)
 
                                 state.read_json()
                                 # This is where I put the publishing of the path
                                 # Loop through all the paths and publish them in seperate topics
-                                for path in auton.paths:
+                                for path in auto.paths:
                                     a = []
                                     for goal in path.goals:
                                         a.append(goal.get_goal())
-                                    self.ros_node.publish("/auto/paths", GoalPath, path.get_path(a), latching = True)
+                                    self.publish("/auto/paths", GoalPath, path.get_path(a), latching = True)
                                     rospy.loginfo("Published Path, with the name '%s'", path.name)
-                                rospy.logerr("Publishing Path Failed. Did not find a path named '%s' in the data file", path.name)
 
                                 # Todo add this as a seperate subscriber to the proxy
                                 msg.data = auto.start_pose
