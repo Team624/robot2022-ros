@@ -95,8 +95,8 @@ class RvizData:
             odom.header.frame_id = "map"
 
             if ((self.get_data("/pose/x") or self.get_data("/pose/x") or self.get_data("/pose/x")) is not None):
-                odom.pose.position.x = self.get_data("/pose/x")
-                odom.pose.position.y = self.get_data("/pose/y")
+                odom.pose.pose.position.x = self.get_data("/pose/x")
+                odom.pose.pose.position.y = self.get_data("/pose/y")
                 quat = quaternion_from_euler(0,0,self.get_data("/pose/th"))
                 odom.pose.pose.orientation.x = quat[0]
                 odom.pose.pose.orientation.y = quat[1]

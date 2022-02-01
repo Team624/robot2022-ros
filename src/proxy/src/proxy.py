@@ -139,19 +139,19 @@ class Proxy:
             if (index == len(msg.goals)-1):
                 x_diff = 0
                 y_diff = 0
-                self.table.putNumber("/pathTable/path?/point!/Vx".replace("!", str(index)).replace("?", str(msg.path_index)), 0)
-                self.table.putNumber("/pathTable/path?/point!/Vy".replace("!", str(index)).replace("?", str(msg.path_index)), 0)
+                self.table.putNumber("/pathTable/path?/point!/Vx".replace("!", str(index)).replace("?", str(int(msg.path_index))), 0)
+                self.table.putNumber("/pathTable/path?/point!/Vy".replace("!", str(index)).replace("?", str(int(msg.path_index))), 0)
             else:
                 x_diff = msg.goals[index].pose.position.x - msg.goals[index + 1].pose.position.x
                 y_diff = msg.goals[index].pose.position.y - msg.goals[index + 1].pose.position.y
-                self.table.putNumber("/pathTable/path?/point!/Vx".replace("!", str(index)).replace("?", str(msg.path_index)), x_diff/times[index])
-                self.table.putNumber("/pathTable/path?/point!/Vy".replace("!", str(index)).replace("?", str(msg.path_index)), y_diff/times[index])
+                self.table.putNumber("/pathTable/path?/point!/Vx".replace("!", str(index)).replace("?", str(int(msg.path_index))), x_diff/times[index])
+                self.table.putNumber("/pathTable/path?/point!/Vy".replace("!", str(index)).replace("?", str(int(msg.path_index))), y_diff/times[index])
 
-            self.table.putNumber("/pathTable/path?/numPoints".replace("?", str(msg.path_index)), len(msg.goals))
-            self.table.putNumber("/pathTable/path?/point!/X".replace("!", str(index)).replace("?", str(msg.path_index)), msg.goals[index].pose.position.x)
-            self.table.putNumber("/pathTable/path?/point!/Y".replace("!", str(index)).replace("?", str(msg.path_index)), msg.goals[index].pose.position.y)
-            self.table.putNumber("/pathTable/path?/point!/Heading".replace("!", str(index)).replace("?", str(msg.path_index)), headings[index])
-            self.table.putBoolean("/pathTable/path?/point!/Vision".replace("!", str(index)).replace("?", str(msg.path_index)), msg.forward_movement_only)
+            self.table.putNumber("/pathTable/path?/numPoints".replace("?", str(int(msg.path_index))), len(msg.goals))
+            self.table.putNumber("/pathTable/path?/point!/X".replace("!", str(index)).replace("?", str(int(msg.path_index))), msg.goals[index].pose.position.x)
+            self.table.putNumber("/pathTable/path?/point!/Y".replace("!", str(index)).replace("?", str(int(msg.path_index))), msg.goals[index].pose.position.y)
+            self.table.putNumber("/pathTable/path?/point!/Heading".replace("!", str(index)).replace("?", str(int(msg.path_index))), headings[index])
+            self.table.putBoolean("/pathTable/path?/point!/Vision".replace("!", str(index)).replace("?", str(int(msg.path_index))), msg.forward_movement_only)
             index += 1
 
     def main(self):
