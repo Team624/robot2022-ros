@@ -112,8 +112,8 @@ class Proxy:
             if (index == len(msg.goals)-1):
                 distances.append(0)
             else:
-                x_diff = msg.goals[index].pose.position.x - msg.goals[index + 1].pose.position.x
-                y_diff = msg.goals[index].pose.position.y - msg.goals[index + 1].pose.position.y
+                x_diff = msg.goals[index + 1].pose.position.x - msg.goals[index].pose.position.x
+                y_diff = msg.goals[index + 1].pose.position.y - msg.goals[index].pose.position.y
                 dist = math.sqrt(math.pow(x_diff, 2) + math.pow(y_diff, 2))
                 distances.append(dist)
             index += 1
@@ -127,7 +127,13 @@ class Proxy:
 
         times = []
         headings = [msg.constants.kA]
-        heading_diff = msg.constants.kB - msg.constants.kA
+        errorA = msg.constants.kB - msg.constants.kA
+        errorB = errorA - (math.pi * 2)
+        errorC = errorA + (math.pi * 2)
+
+        heading_diff = errorB if abs(errorB) < abs(errorC) else errorC
+        heading_diff = errorA if abs(errorA) < abs(heading_diff) else heading_diff
+
         for distance in distances:
             times.append((distance/total_dist) * msg.constants.kP)
             headings.append(headings[len(headings)-1] + heading_diff/(float)(len(msg.goals)-1))
@@ -142,8 +148,8 @@ class Proxy:
                 self.table.putNumber("/pathTable/path?/point!/Vx".replace("!", str(index)).replace("?", str(int(msg.path_index))), 0)
                 self.table.putNumber("/pathTable/path?/point!/Vy".replace("!", str(index)).replace("?", str(int(msg.path_index))), 0)
             else:
-                x_diff = msg.goals[index].pose.position.x - msg.goals[index + 1].pose.position.x
-                y_diff = msg.goals[index].pose.position.y - msg.goals[index + 1].pose.position.y
+                x_diff = msg.goals[index + 1].pose.position.x - msg.goals[index].pose.position.x
+                y_diff = msg.goals[index + 1].pose.position.y - msg.goals[index].pose.position.y
                 self.table.putNumber("/pathTable/path?/point!/Vx".replace("!", str(index)).replace("?", str(int(msg.path_index))), x_diff/times[index])
                 self.table.putNumber("/pathTable/path?/point!/Vy".replace("!", str(index)).replace("?", str(int(msg.path_index))), y_diff/times[index])
 

@@ -10,8 +10,8 @@ from diff_drive.msg import Goal, GoalPath, Constants, Linear, Angular, BoolArray
 from auton_modules.state import SetIdle, State, StartPath, Intake, Shooter, Hood, Flywheel
 
 # The id of the auton, used for picking auton
-auton_id = 2
-auton_title = "Auton Two Ball D"
+auton_id = 6
+auton_title = "Auton Six Ball"
 
 # Start of our states
 class Idle(SetIdle):
@@ -45,6 +45,7 @@ class StartFirstPath(StartPath):
             return StartSecondPath(self.ros_node)
         return self
 
+
 class StartSecondPath(StartPath):
     """
     The state which publishes the first path to follow
@@ -58,9 +59,56 @@ class StartSecondPath(StartPath):
 
     def tick(self):
         if self.check_timer(1):
-            return Blank(self.ros_node)
+            return StartThirdPath(self.ros_node)
         return self
 
+class StartThirdPath(StartPath):
+    """
+    The state which publishes the first path to follow
+    """
+
+    def initialize(self):
+        self.log_state()
+
+    def execute_action(self):
+        self.start_path(2)
+
+    def tick(self):
+        if self.check_timer(1):
+            return StartFourthPath(self.ros_node)
+        return self
+
+class StartFourthPath(StartPath):
+    """
+    The state which publishes the first path to follow
+    """
+
+    def initialize(self):
+        self.log_state()
+
+    def execute_action(self):
+        self.start_path(3)
+
+    def tick(self):
+        if self.check_timer(1):
+            return StartFifthPath(self.ros_node)
+        return self
+
+class StartFifthPath(StartPath):
+    """
+    The state which publishes the first path to follow
+    """
+
+    def initialize(self):
+        self.log_state()
+
+    def execute_action(self):
+        self.start_path(4)
+
+    def tick(self):
+        if self.check_timer(1):
+            return Blank(self.ros_node)
+        return self
 
 class Blank(Intake):
     """
