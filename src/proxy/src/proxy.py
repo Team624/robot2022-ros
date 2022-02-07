@@ -157,7 +157,7 @@ class Proxy:
             self.table.putNumber("/pathTable/path?/point!/X".replace("!", str(index)).replace("?", str(int(msg.path_index))), msg.goals[index].pose.position.x)
             self.table.putNumber("/pathTable/path?/point!/Y".replace("!", str(index)).replace("?", str(int(msg.path_index))), msg.goals[index].pose.position.y)
             self.table.putNumber("/pathTable/path?/point!/Heading".replace("!", str(index)).replace("?", str(int(msg.path_index))), headings[index])
-            self.table.putBoolean("/pathTable/path?/point!/Vision".replace("!", str(index)).replace("?", str(int(msg.path_index))), msg.forward_movement_only)
+            self.table.putNumber("/pathTable/path?/point!/Tolerance".replace("!", str(index)).replace("?", str(int(msg.path_index))), msg.linear.min_linear_speed)
             index += 1
 
     def main(self):

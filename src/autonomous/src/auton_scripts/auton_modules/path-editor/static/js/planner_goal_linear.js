@@ -51,7 +51,7 @@ function displayGoalLinear(x){
 
   var myMinSpeed = document.createElement('H5');
   myMinSpeed.id = "LinearGoalDataMinSpeed" + x
-  myMinSpeed.textContent = "Min Speed"
+  myMinSpeed.textContent = "Tolerance"
   myMinSpeed.className = "LinearGoalDataName"
 
   var myMinSpeedInput = document.createElement('INPUT');
