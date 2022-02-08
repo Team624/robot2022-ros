@@ -164,5 +164,9 @@ def start(ros_node):
     ros_node.subscribe("/auto/flywheel/current/rpm", Float32)
     ros_node.subscribe("/auto/hood/current/angle", Float32)
 
+    ros_node.subscribe("/pathTable/status/path", Float32)
+    ros_node.subscribe("/pathTable/status/point", Float32)
+    ros_node.subscribe("/pathTable/status/finishedPath", Bool)
+
     # Return the wanted Start and Shutdown state
     return Idle, Shutdown

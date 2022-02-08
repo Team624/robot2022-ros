@@ -204,5 +204,5 @@ def read_json():
 
 if __name__ == "__main__":
     read_json()
-    #app.run('10.06.24.47')
-    app.run()
+    app.run('10.06.24.47')
+    #app.run()

@@ -70,19 +70,15 @@ class State(object):
 
         return angle
     
-    # Checks if you passed the waypoint
-    def passed_waypoint(self, waypoint_num):
-        """ Checks if you passed a given waypoint in a path. Starts at 1 """
-        bools = self.ros_node.get_data('/diff_drive/waypoints_achieved', simple_data = False)
-        # Waits for the data
-        if bools is not None:
-            if len(bools.bools) >= waypoint_num:
-                return bools.bools[waypoint_num -1]
-            
-            rospy.logerr_throttle(15, "Checking Waypoint Failed. Did not find a waypoint with the number '%s' in the path" %(waypoint_num))
-            return False
-        else:
-            return False
+    # Get data
+    def get_path(self):
+        return self.ros_node.get_data("/pathTable/status/path")
+
+    def get_point(self):
+        return self.ros_node.get_data("/pathTable/status/point")
+
+    def finished_path(self):
+        return self.ros_node.get_data("/pathTable/status/finishedPath")
 
     # This runs in the child class when created
     def initialize(self):
@@ -139,6 +135,9 @@ class SetIdle(State):
         self.ros_node.publish("/auto/hood/state", String, hood_state, latching = True)
         rospy.loginfo("Hood Idle")
 
+        # Path Idle
+        self.ros_node.publish("/pathTable/startPathIndex", Float32, -1, latching = True)
+
 
 
 class StartPath(State):
@@ -148,6 +147,7 @@ class StartPath(State):
         """ This gets the path data from the json file and publishes to diff_drive """
         # Checks for updated data
         self.ros_node.publish("/pathTable/startPathIndex", Float32, index, latching = True)
+        
 
 # This is ROBOT SPECIFIC
 class Intake(State):
