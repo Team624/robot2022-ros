@@ -1,4 +1,6 @@
 <launch>
   <node pkg="diff_drive" type="rviz_data.py" name="rviz_data"  output="screen">
   </node>
+    <node pkg="tf" type="static_transform_publisher" name="map_to_target" args="8.2423 -4.0513 0 0 0 0 /map /target 100" />
+
 </launch>

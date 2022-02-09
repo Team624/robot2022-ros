@@ -6,7 +6,10 @@ import threading
 from geometry_msgs.msg import Twist, PoseStamped, PoseWithCovarianceStamped
 from nav_msgs.msg import Odometry, Path
 from diff_drive.msg import Goal, GoalPath, Constants, Linear, Angular
-from tf.transformations import quaternion_from_euler
+from tf.transformations import quaternion_from_euler, euler_from_quaternion
+import tf
+from geometry_msgs.msg import Quaternion
+import math
 
 # Creates proxy node
 rospy.init_node('rviz_data')
@@ -15,7 +18,7 @@ class RvizData:
 
     def __init__(self):
 
-        self.update_rate = rospy.get_param('~rate', 30)
+        self.update_rate = rospy.get_param('~rate', 40)
 
         # A Dictionary of wanted topic name and data type
         self.input_data = rospy.get_param('~input_data', [])
@@ -31,6 +34,9 @@ class RvizData:
         self.poses = []
 
         rospy.Subscriber("/auto/paths", GoalPath, self._on_new_path)
+
+        self.odom_broadcaster = tf.TransformBroadcaster()
+        self.listener = tf.TransformListener()
 
         # rospy.Subscriber("/auto/robot_set_pose", Float32MultiArray, self._on_reset_pose)
 
@@ -91,19 +97,51 @@ class RvizData:
         self.subscribe("/pose/y", Float32)
         self.subscribe("/pose/th", Float32)
         while not rospy.is_shutdown():
+            current_time = rospy.Time.now()
             odom = Odometry()
             odom.header.frame_id = "map"
+            odom.child_frame_id = "base_link"
 
             if ((self.get_data("/pose/x") or self.get_data("/pose/x") or self.get_data("/pose/x")) is not None):
                 odom.pose.pose.position.x = self.get_data("/pose/x")
                 odom.pose.pose.position.y = self.get_data("/pose/y")
                 quat = quaternion_from_euler(0,0,self.get_data("/pose/th"))
+
+                self.odom_broadcaster.sendTransform(
+                    (self.get_data("/pose/x"), self.get_data("/pose/y"), 0.0),
+                    quat,
+                    current_time,
+                    "base_link",
+                    "map"
+                )
+
                 odom.pose.pose.orientation.x = quat[0]
                 odom.pose.pose.orientation.y = quat[1]
                 odom.pose.pose.orientation.z = quat[2]
                 odom.pose.pose.orientation.w = quat[3]
+            else:
+                self.odom_broadcaster.sendTransform(
+                    (0.0, 0.0, 0.0),
+                    quaternion_from_euler(0,0,0),
+                    current_time,
+                    "base_link",
+                    "map"
+                )
 
             self.publish("/rviz/odom", Odometry, odom)
+            try:
+                (trans,rot) = self.listener.lookupTransform("/base_link", "/target", rospy.Time(0))
+                x = trans[0]
+                y = trans[1]
+                wanted_angle = math.atan2(y, x) * (180/math.pi)
+
+                print("x : ", x)
+                print("y : ", y)
+                print("This is the angle the robot need to face: ", wanted_angle)
+                self.publish("/vision/quickTurn", Float32, wanted_angle)
+            except:
+                pass
+
             # Sleeps to meet specified rate
             r.sleep()
 
