@@ -1,5 +1,5 @@
 rate: 50
-lower_hsv: [90, 175, 0]
+lower_hsv: [90, 134, 0]
 higher_hsv: [140, 255, 255]
 min_area: 150
 rotation_window_size: 5
