@@ -96,7 +96,8 @@ class VisionTargeting:
             self.find_target_ind+=1
             if (self.find_target_ind > self.find_target_thresh):
               rot_data = Float32()
-              rot_data.data = 60
+              # Means no target found
+              rot_data.data = 1000
               self.rotation_pub.publish(rot_data)
 
         # cv2.imshow('Contour Drawing', mask)
