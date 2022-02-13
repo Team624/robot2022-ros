@@ -3,9 +3,9 @@
 import numpy as np
 import cv2
 import math
-import ds
 import numpy as np
 import rospy
+import ds
 from std_msgs.msg import Float32, Float64, Bool
 
 
@@ -18,17 +18,26 @@ class VisionBall:
         self.rotation_pub = rospy.Publisher("/ball/rotationAngle", Float32, queue_size=1)
         self.ball_pub = rospy.Publisher("/ball/ballArea", Float32, queue_size=1)
 
+        rospy.Subscriber("/ball/isBlue", Bool, self.get_is_blue)
+
 
         self.cap = cv2.VideoCapture(2)
         self.cap.set(cv2.CAP_PROP_FRAME_WIDTH,1920/3)
         self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT,1080/3)
 
-        self.rotationAngle = ds.Window(maxLen=rospy.get_param("~rotation_window_size", 5))
-        self.ballArea = ds.Window(maxLen=rospy.get_param("~ball_window_size", 5))
+        self.rotationAngle = ds.Window(maxLen=rospy.get_param("~rotation_window_size", 3))
+        self.ballArea = ds.Window(maxLen=rospy.get_param("~ball_window_size", 3))
+
+        self.lower_b = rospy.get_param("~lower_b", [90, 134, 0])
+        self.higher_b = rospy.get_param("~higher_b", [140, 255, 255])
+
+        self.lower_r = rospy.get_param("~lower_r", [90, 134, 0])
+        self.higher_r = rospy.get_param("~higher_r", [140, 255, 255])
+
+        self.is_blue = True
 
     def get_x_offset(self, x, wanted_x):
         return x - (wanted_x)
-
 
     def getAngle(self, center, center_x, height, width):
         angle = (math.atan2(self.get_x_offset(center[0], center_x),  height))*180/math.pi % 360.0
@@ -87,19 +96,25 @@ class VisionBall:
 
     def empty(self,a):
         pass
-        
+    
+
+    def get_is_blue(self, msg):
+        self.is_blue = msg.data
     
         # cv2.imshow('image', mask)
     def main(self):
-        window  = ds.Window(3)
         undetected = 0
         try:
             r = rospy.Rate(rospy.get_param("~rate", 50))
             while not rospy.is_shutdown():
                 success, img = self.cap.read()
 
-                lower = np.array([90, 134, 0])
-                upper = np.array([140, 255, 255])
+                if self.is_blue:
+                    lower = np.array(self.lower_b)
+                    upper = np.array(self.higher_b)
+                else:
+                    lower = np.array(self.lower_r)
+                    upper = np.array(self.higher_r)
 
                 mask = self.colorFilter(img,lower,upper)
 
@@ -107,9 +122,10 @@ class VisionBall:
                     
                 center_x, center_y = width/2, height/2
                 
-                center = self.getContoursCenter(self.getContours(mask,150,0.65))
+                contour = self.getContours(mask,150,0.65)
+                center = self.getContoursCenter(contour)
 
-                rot_angle=180
+                rot_angle=1000
                 
                 if center is not None:
                     center[0]=int(center[0])
@@ -117,8 +133,11 @@ class VisionBall:
                     center=(center[0], center[1])
                     img=cv2.circle(img, center, 10, (0,0,255),-1)
                     rot_angle = self.getAngle(center, center_x, height, width)
-                window.add(rot_angle)
-                print(window.getAverage())
+                    self.rotationAngle.add(rot_angle)
+                    self.ballArea.add(cv2.contourArea(contour))
+
+                print("Angle: " + str(self.rotationAngle.getAverage()))
+                print("Area: " + str(self.ballArea.getAverage()))
 
                 cv2.imshow('im', img)
                 cv2.imshow('image', mask)

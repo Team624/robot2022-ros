@@ -1,7 +1,9 @@
 rate: 50
-lower_hsv: [90, 134, 0]
-higher_hsv: [140, 255, 255]
+lower_b: [90, 134, 0]
+higher_b: [140, 255, 255]
+lower_r: [90, 134, 0]
+higher_r: [140, 255, 255]
 min_area: 150
-rotation_window_size: 5
-distance_window_size: 5
+rotation_window_size: 3
+distance_window_size: 3
 e: 0.5
