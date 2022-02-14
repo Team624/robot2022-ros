@@ -21,7 +21,7 @@ class VisionBall:
         rospy.Subscriber("/ball/isBlue", Bool, self.get_is_blue)
 
 
-        self.cap = cv2.VideoCapture(2)
+        self.cap = cv2.VideoCapture(0)
         self.cap.set(cv2.CAP_PROP_FRAME_WIDTH,1920/3)
         self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT,1080/3)
 
@@ -66,8 +66,6 @@ class VisionBall:
             eccen = self.eccentricity(contour)<e
             if cv2.contourArea(contour)>minArea and eccen and len(approx)>6:
                 newContours.append(contour)
-            # if cv2.contourArea(contour)>400:
-            #     newContours.append(contour)
         if len(newContours)==0:
             return None
         newContours=sorted(newContours, key=cv2.contourArea, reverse=False)
@@ -101,9 +99,7 @@ class VisionBall:
     def get_is_blue(self, msg):
         self.is_blue = msg.data
     
-        # cv2.imshow('image', mask)
     def main(self):
-        undetected = 0
         try:
             r = rospy.Rate(rospy.get_param("~rate", 50))
             while not rospy.is_shutdown():
@@ -124,9 +120,10 @@ class VisionBall:
                 
                 contour = self.getContours(mask,150,0.65)
                 center = self.getContoursCenter(contour)
-
-                rot_angle=1000
                 
+                rot_data = Float32()
+                ball_data = Float32()
+
                 if center is not None:
                     center[0]=int(center[0])
                     center[1]=int(center[1])
@@ -136,11 +133,22 @@ class VisionBall:
                     self.rotationAngle.add(rot_angle)
                     self.ballArea.add(cv2.contourArea(contour))
 
-                print("Angle: " + str(self.rotationAngle.getAverage()))
-                print("Area: " + str(self.ballArea.getAverage()))
+                    rot_data.data = self.rotationAngle.getAverage()
 
-                cv2.imshow('im', img)
-                cv2.imshow('image', mask)
+                    ball_data.data = self.ballArea.getAverage()
+                else:
+                    rot_data.data = -1000
+
+                    ball_data.data = -1
+
+                self.rotation_pub.publish(rot_data)
+                self.ball_pub.publish(ball_data)
+
+                # print("Angle: " + str(self.rotationAngle.getAverage()))
+                # print("Area: " + str(self.ballArea.getAverage()))
+
+                # cv2.imshow('image', img)
+                # cv2.imshow('mask', mask)
 
                 cv2.waitKey(3)
 
