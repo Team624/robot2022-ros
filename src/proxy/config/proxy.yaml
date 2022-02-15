@@ -15,7 +15,7 @@ output_data: [{name: "/auto/shooter/state", type: "string", default: "idle"},
               {name: "/vision/distanceAngle", type: "number", default: 0.0},
               {name: "/vision/quickTurn", type: "number", default: 0.0},
               {name: "/ball/rotationAngle", type: "number", default: 0.0},
-              {name: "/ball/area", type: "number", default: 0.0},
+              {name: "/ball/ballArea", type: "number", default: 0.0},
               {name: "/auto/intake/state", type: "string", default: "retract"}]
 
 # Wanted Input Data ("number", "string", "boolean")

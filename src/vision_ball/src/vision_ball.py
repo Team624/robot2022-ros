@@ -21,7 +21,7 @@ class VisionBall:
         rospy.Subscriber("/ball/isBlue", Bool, self.get_is_blue)
 
 
-        self.cap = cv2.VideoCapture(0)
+        self.cap = cv2.VideoCapture(2)
         self.cap.set(cv2.CAP_PROP_FRAME_WIDTH,1920/3)
         self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT,1080/3)
 
@@ -31,7 +31,7 @@ class VisionBall:
         self.lower_b = rospy.get_param("~lower_b", [90, 134, 0])
         self.higher_b = rospy.get_param("~higher_b", [140, 255, 255])
 
-        self.lower_r = rospy.get_param("~lower_r", [90, 134, 0])
+        self.lower_r = rospy.get_param("~lower_r", [0, 175, 0])
         self.higher_r = rospy.get_param("~higher_r", [140, 255, 255])
 
         self.is_blue = True
@@ -59,7 +59,7 @@ class VisionBall:
 
     def getContours(self, mask, minArea, e):
         edges = cv2.Canny(mask,100, 200)
-        _, contours, _= cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        contours, _= cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         newContours = []
         for contour in contours:
             approx = cv2.approxPolyDP(contour, .03*cv2.arcLength(contour, True), True)

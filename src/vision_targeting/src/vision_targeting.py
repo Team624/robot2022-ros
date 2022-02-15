@@ -43,7 +43,7 @@ class VisionTargeting:
     self.rotationAngle = ds.Window(maxLen=rospy.get_param("~rotation_window_size", 5))
 
     # When to publish 180 rotation to find target
-    self.find_target_thresh = rospy.get_param("~find_target_thresh", 40)
+    self.find_target_thresh = rospy.get_param("~find_target_thresh", 10)
     self.find_target_ind = 0 
 
   def get_dist(self, rectangle_params):
