@@ -64,9 +64,11 @@ class VisionTargeting:
         mask = color_filter.ColorFilter(img).convertToGreen()
         dataCollector = data_gatherer.DataGatherer(mask)
         averageCenter = dataCollector.getAverageCenter()
+        distance_height = -1
         if averageCenter is not None:
             self.find_target_ind = 0
-            
+            distance_height = averageCenter[1]
+
             #casting 
             averageCenter[0]=int(averageCenter[0])
             averageCenter[1]=int(averageCenter[1])
@@ -74,12 +76,14 @@ class VisionTargeting:
             img=cv2.circle(img, averageCenter, 10, (0,0,255),-1)
             angle = dataCollector.getAngleAdvanced(averageCenter, center_x, height, width)
             self.rotationAngle.add(angle)
-            left, right = dataCollector.getExtremes()
-            leftAngle, rightAngle = dataCollector.getAngle(left, center_x, height), dataCollector.getAngle(right, center_x, height)
-            if (left[0]>width/2 and right[0]>width/2) or (left[0]<width/2 and right[0]<width/2):
-                self.distanceAngle.add(abs(leftAngle-rightAngle))
-            else:
-                self.distanceAngle.add(leftAngle+rightAngle)
+
+            self.distanceAngle.add(distance_height)
+            # left, right = dataCollector.getExtremes()
+            # leftAngle, rightAngle = dataCollector.getAngle(left, center_x, height), dataCollector.getAngle(right, center_x, height)
+            # if (left[0]>width/2 and right[0]>width/2) or (left[0]<width/2 and right[0]<width/2):
+            #     self.distanceAngle.add(abs(leftAngle-rightAngle))
+            # else:
+            #     self.distanceAngle.add(leftAngle+rightAngle)
 
             #print(str(self.rotationAngle.getAverage())+" : "+str(self.distanceAngle.getAverage()))
 
