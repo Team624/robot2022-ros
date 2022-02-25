@@ -121,7 +121,37 @@ class StartThirdPath(StartPath):
         self.start_path(2)
 
     def tick(self):
-        if self.check_timer(1):
+        return SpinUp(self.ros_node)
+
+class SpinUp(Shooter):
+    """
+    The state which publishes the first path to follow
+    """
+
+    def initialize(self):
+        self.log_state()
+
+    def execute_action(self):
+        self.start_hide()
+
+    def tick(self):
+        if self.finished_path():
+            return Hide(self.ros_node)
+        return self
+
+class Hide(Shooter):
+    """
+    The state which publishes the first path to follow
+    """
+
+    def initialize(self):
+        self.log_state()
+
+    def execute_action(self):
+        self.start_hide_shoot()
+
+    def tick(self):
+        if self.check_timer(2):
             return Blank(self.ros_node)
         return self
 

@@ -5,9 +5,9 @@
         <param name="image_type" value="Image"/>
     </node>    
 
-    <node pkg="vision_ball" type="vision_ball.py" name="vision_ball"  output="screen">
+    <!-- <node pkg="vision_ball" type="vision_ball.py" name="vision_ball"  output="screen">
         <rosparam command="load" file="$(find vision_ball)/config/vision_ball.yaml"/>
-    </node>
+    </node> -->
 
     <include file="$(find autonomous)/launch/autonomous.launch" />
     <!-- Checked -->

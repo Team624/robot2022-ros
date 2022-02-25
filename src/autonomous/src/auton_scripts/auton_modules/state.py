@@ -181,6 +181,22 @@ class Shooter(State):
         rospy.loginfo("Shooter Idle")
     
     # Overrides the other states because it needs to control all three subsystems 
+    def start_hide(self):
+        """ This starts the turret tracking, adjusting rpm, and hood angle """
+        shooter_state = String()
+        shooter_state.data = "hide"
+
+        self.ros_node.publish("/auto/shooter/state", String, shooter_state, latching = True)
+        rospy.loginfo("Shooter Hide")
+
+    def start_hide_shoot(self):
+        """ This starts the turret tracking, adjusting rpm, and hood angle """
+        shooter_state = String()
+        shooter_state.data = "hide_shoot"
+
+        self.ros_node.publish("/auto/shooter/state", String, shooter_state, latching = True)
+        rospy.loginfo("Shooter Hide Shoot")
+
     def start_prime(self):
         """ This starts the turret tracking, adjusting rpm, and hood angle """
         shooter_state = String()
