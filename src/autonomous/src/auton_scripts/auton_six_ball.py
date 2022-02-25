@@ -69,7 +69,7 @@ class Prime1(Shooter):
         self.start_prime()
 
     def tick(self):
-        if self.check_timer(0.5) and self.finished_path():
+        if self.check_timer(0.5) and self.finished_path() and self.get_path() == 0:
             return Shoot1(self.ros_node)
         return self
 
@@ -82,9 +82,11 @@ class Shoot1(Shooter):
         self.log_state()
 
     def execute_action(self):
-        self.start_shoot()
+        pass
 
     def tick(self):
+        if self.check_timer(0.3):
+            self.start_shoot()
         if self.check_timer(2):
             self.idle()
             return StartSecondPath(self.ros_node)
@@ -146,7 +148,7 @@ class Prime2(Shooter):
         self.start_prime()
 
     def tick(self):
-        if self.finished_path():
+        if self.finished_path() and self.get_path() == 3:
             return Shoot2(self.ros_node)
         return self
 
@@ -159,9 +161,11 @@ class Shoot2(Shooter):
         self.log_state()
 
     def execute_action(self):
-        self.start_shoot()
+        pass
 
     def tick(self):
+        if self.check_timer(0.3):
+            self.start_shoot()
         if self.check_timer(2):
             self.idle()
             return StartFifthSixthPath(self.ros_node)
@@ -196,7 +200,7 @@ class Prime3(Shooter):
         self.start_prime()
 
     def tick(self):
-        if self.check_timer(0.5) and self.finished_path():
+        if self.check_timer(0.5) and self.finished_path() and self.get_path() == 5:
             return Shoot3(self.ros_node)
         return self
 
@@ -209,9 +213,11 @@ class Shoot3(Shooter):
         self.log_state()
 
     def execute_action(self):
-        self.start_shoot()
+        pass
 
     def tick(self):
+        if self.check_timer(0.3):
+            self.start_shoot()
         if self.check_timer(2):
             return Final(self.ros_node)
         return self
