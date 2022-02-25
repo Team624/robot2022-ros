@@ -40,11 +40,55 @@ class StartFirstPath(StartPath):
     def execute_action(self):
         self.start_path(0)
 
+    def tick(self):       
+        return DeployIntake(self.ros_node)
+
+class DeployIntake(Intake):
+    """
+    The state which waits for the second waypoint of the path.
+    """
+
+    def initialize(self):
+        self.log_state()
+
+    def execute_action(self):
+        self.deploy_intake()
+
     def tick(self):
-        if self.check_timer(1):
-            return StartSecondPath(self.ros_node)
+        return Prime1(self.ros_node)
+
+class Prime1(Shooter):
+    """
+    The state which publishes the first path to follow
+    """
+
+    def initialize(self):
+        self.log_state()
+
+    def execute_action(self):
+        self.start_prime()
+
+    def tick(self):
+        if self.check_timer(0.5) and self.finished_path():
+            return Shoot1(self.ros_node)
         return self
 
+class Shoot1(Shooter):
+    """
+    The state which publishes the first path to follow
+    """
+
+    def initialize(self):
+        self.log_state()
+
+    def execute_action(self):
+        self.start_shoot()
+
+    def tick(self):
+        if self.check_timer(2):
+            self.idle()
+            return StartSecondPath(self.ros_node)
+        return self
 
 class StartSecondPath(StartPath):
     """
@@ -58,9 +102,7 @@ class StartSecondPath(StartPath):
         self.start_path(1)
 
     def tick(self):
-        if self.check_timer(1):
-            return StartThirdPath(self.ros_node)
-        return self
+        return StartThirdPath(self.ros_node)
 
 class StartThirdPath(StartPath):
     """
@@ -74,9 +116,7 @@ class StartThirdPath(StartPath):
         self.start_path(2)
 
     def tick(self):
-        if self.check_timer(1):
-            return StartFourthPath(self.ros_node)
-        return self
+        return StartFourthPath(self.ros_node)
 
 class StartFourthPath(StartPath):
     """
@@ -90,11 +130,11 @@ class StartFourthPath(StartPath):
         self.start_path(3)
 
     def tick(self):
-        if self.check_timer(1):
-            return StartFifthPath(self.ros_node)
+        if self.check_timer(0.3) and self.get_path() == 3:
+            return Prime2(self.ros_node)
         return self
 
-class StartFifthPath(StartPath):
+class Prime2(Shooter):
     """
     The state which publishes the first path to follow
     """
@@ -103,25 +143,77 @@ class StartFifthPath(StartPath):
         self.log_state()
 
     def execute_action(self):
-        self.start_path(4)
+        self.start_prime()
 
     def tick(self):
-        if self.check_timer(1):
-            return Blank(self.ros_node)
+        if self.finished_path():
+            return Shoot2(self.ros_node)
         return self
 
-class Blank(Intake):
+class Shoot2(Shooter):
     """
-    The state which waits for the second waypoint of the path.
+    The state which publishes the first path to follow
     """
 
     def initialize(self):
         self.log_state()
 
     def execute_action(self):
-        pass
+        self.start_shoot()
 
     def tick(self):
+        if self.check_timer(2):
+            self.idle()
+            return StartFifthSixthPath(self.ros_node)
+        return self
+
+class StartFifthSixthPath(StartPath):
+    """
+    The state which publishes the first path to follow
+    """
+
+    def initialize(self):
+        self.log_state()
+
+    def execute_action(self):
+        # Does both the fifth and sixth path
+        self.start_path(5)
+
+    def tick(self):
+        if self.get_path() == 5:
+            return Prime3(self.ros_node)
+        return self
+
+class Prime3(Shooter):
+    """
+    The state which publishes the first path to follow
+    """
+
+    def initialize(self):
+        self.log_state()
+
+    def execute_action(self):
+        self.start_prime()
+
+    def tick(self):
+        if self.check_timer(0.5) and self.finished_path():
+            return Shoot3(self.ros_node)
+        return self
+
+class Shoot3(Shooter):
+    """
+    The state which publishes the first path to follow
+    """
+
+    def initialize(self):
+        self.log_state()
+
+    def execute_action(self):
+        self.start_shoot()
+
+    def tick(self):
+        if self.check_timer(2):
+            return Final(self.ros_node)
         return self
 
 class Final(State):

@@ -59,21 +59,7 @@ class StartSecondPath(StartPath):
 
     def tick(self):
         if self.check_timer(2):
-            return Blank(self.ros_node)
-        return self
-
-class Blank(Intake):
-    """
-    The state which waits for the second waypoint of the path.
-    """
-
-    def initialize(self):
-        self.log_state()
-
-    def execute_action(self):
-        pass
-
-    def tick(self):
+            return Final(self.ros_node)
         return self
 
 class Final(State):
