@@ -87,7 +87,7 @@ class Shoot1(Shooter):
     def tick(self):
         if self.check_timer(0.4):
             self.start_shoot()
-        if self.check_timer(2):
+        if self.check_timer(1.3):
             self.idle()
             return StartSecondPath(self.ros_node)
         return self
