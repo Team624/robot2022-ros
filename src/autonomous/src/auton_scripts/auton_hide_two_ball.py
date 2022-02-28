@@ -87,9 +87,9 @@ class Shoot(Shooter):
         pass
 
     def tick(self):
-        if self.check_timer(0.3):
+        if self.check_timer(0.4):
             self.start_shoot()
-        if self.check_timer(2):
+        if self.check_timer(1.5):
             self.idle()
             return StartSecondPath(self.ros_node)
         return self
@@ -123,7 +123,9 @@ class StartThirdPath(StartPath):
         self.start_path(2)
 
     def tick(self):
-        return SpinUp(self.ros_node)
+        if (self.get_path() == 2):
+            return SpinUp(self.ros_node)
+        return self
 
 class SpinUp(Shooter):
     """
@@ -137,7 +139,7 @@ class SpinUp(Shooter):
         self.start_hide()
 
     def tick(self):
-        if self.finished_path() and self.get_path() == 2:
+        if self.finished_path() and self.get_path() == 2 and self.check_timer(0.5):
             return Hide(self.ros_node)
         return self
 

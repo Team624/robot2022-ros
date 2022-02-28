@@ -87,7 +87,7 @@ class Shoot(Shooter):
         pass
 
     def tick(self):
-        if self.check_timer(0.4):
+        if self.check_timer(0.5):
             self.start_shoot()
         if self.check_timer(2):
             self.idle()
