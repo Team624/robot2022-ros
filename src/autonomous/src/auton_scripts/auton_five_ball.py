@@ -85,7 +85,7 @@ class Shoot1(Shooter):
         pass
 
     def tick(self):
-        if self.check_timer(0.3):
+        if self.check_timer(0.6):
             self.start_shoot()
         if self.check_timer(1.5):
             self.idle()
@@ -136,30 +136,14 @@ class Shoot2(Shooter):
         pass
 
     def tick(self):
-        if self.check_timer(0.65):
+        if self.check_timer(0.7):
             self.start_shoot()
         if self.check_timer(1.5):
             self.idle()
-            return StartThirdPath(self.ros_node)
+            return StartThirdAndFourthPath(self.ros_node)
         return self
 
-class StartThirdPath(StartPath):
-    """
-    The state which publishes the first path to follow
-    """
-
-    def initialize(self):
-        self.log_state()
-
-    def execute_action(self):
-        self.start_path(2)
-
-    def tick(self):
-        if self.check_timer(0.2):
-            return StartFourthPath(self.ros_node)
-        return self
-
-class StartFourthPath(StartPath):
+class StartThirdAndFourthPath(StartPath):
     """
     The state which publishes the first path to follow
     """
@@ -171,7 +155,7 @@ class StartFourthPath(StartPath):
         self.start_path(3)
 
     def tick(self):
-        if self.get_path() == 3 and self.check_timer(0.2) and self.finished_path:
+        if self.get_path() == 3 and self.check_timer(0.5) and self.finished_path:
             return StartFifthPath(self.ros_node)
         return self
 
@@ -187,9 +171,9 @@ class StartFifthPath(StartPath):
         pass
 
     def tick(self):
-        if (self.check_timer(0.5)):
+        if self.check_timer(1.5):
             self.start_path(4)
-        if self.check_timer(0.2) and self.get_point() > 15 and self.get_path() == 4:
+        if self.check_timer(3.0) and self.get_point() > 15 and self.get_path() == 4:
             return Prime3(self.ros_node)
         return self
 
@@ -221,7 +205,7 @@ class Shoot3(Shooter):
         pass
 
     def tick(self):
-        if self.check_timer(0.3):
+        if self.check_timer(0.6):
             self.start_shoot()
         if self.check_timer(2):
             return Final(self.ros_node)
