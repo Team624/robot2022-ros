@@ -69,7 +69,7 @@ class Prime1(Shooter):
         self.start_prime()
 
     def tick(self):
-        if self.check_timer(0.5) and self.finished_path() and self.get_path() == 0:
+        if self.check_timer(0.6) and self.finished_path() and self.get_path() == 0:
             return Shoot1(self.ros_node)
         return self
 
@@ -85,28 +85,14 @@ class Shoot1(Shooter):
         pass
 
     def tick(self):
-        if self.check_timer(0.3):
+        if self.check_timer(0.5):
             self.start_shoot()
-        if self.check_timer(2):
+        if self.check_timer(1.0):
             self.idle()
-            return StartSecondPath(self.ros_node)
+            return StartSecondAndThirdPath(self.ros_node)
         return self
 
-class StartSecondPath(StartPath):
-    """
-    The state which publishes the first path to follow
-    """
-
-    def initialize(self):
-        self.log_state()
-
-    def execute_action(self):
-        self.start_path(1)
-
-    def tick(self):
-        return StartThirdPath(self.ros_node)
-
-class StartThirdPath(StartPath):
+class StartSecondAndThirdPath(StartPath):
     """
     The state which publishes the first path to follow
     """
@@ -118,7 +104,25 @@ class StartThirdPath(StartPath):
         self.start_path(2)
 
     def tick(self):
-        return StartFourthPath(self.ros_node)
+        if self.get_path() == 1 and self.check_timer(0.5) and self.finished_path:
+            return WaitForPath(self.ros_node)
+        return self
+
+class WaitForPath(StartPath):
+    """
+    The state which publishes the first path to follow
+    """
+
+    def initialize(self):
+        self.log_state()
+
+    def execute_action(self):
+        pass
+
+    def tick(self):
+        if self.get_path() == 2 and self.check_timer(1.0) and self.finished_path:
+            return StartFourthPath(self.ros_node)
+        return self
 
 class StartFourthPath(StartPath):
     """
@@ -129,10 +133,12 @@ class StartFourthPath(StartPath):
         self.log_state()
 
     def execute_action(self):
-        self.start_path(3)
+        pass
 
     def tick(self):
-        if self.check_timer(0.3) and self.get_path() == 3:
+        if (self.check_timer(1.5)):
+            self.start_path(3)
+        if self.check_timer(2.5) and self.get_path() == 3:
             return Prime2(self.ros_node)
         return self
 
@@ -164,14 +170,14 @@ class Shoot2(Shooter):
         pass
 
     def tick(self):
-        if self.check_timer(0.3):
+        if self.check_timer(0.5):
             self.start_shoot()
-        if self.check_timer(2):
+        if self.check_timer(1):
             self.idle()
-            return StartFifthSixthPath(self.ros_node)
+            return StartFifthPath(self.ros_node)
         return self
 
-class StartFifthSixthPath(StartPath):
+class StartFifthPath(StartPath):
     """
     The state which publishes the first path to follow
     """
@@ -180,7 +186,6 @@ class StartFifthSixthPath(StartPath):
         self.log_state()
 
     def execute_action(self):
-        # Does both the fifth and sixth path
         self.start_path(5)
 
     def tick(self):
@@ -216,9 +221,9 @@ class Shoot3(Shooter):
         pass
 
     def tick(self):
-        if self.check_timer(0.3):
+        if self.check_timer(0.5):
             self.start_shoot()
-        if self.check_timer(2):
+        if self.check_timer(1):
             return Final(self.ros_node)
         return self
 

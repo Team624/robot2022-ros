@@ -155,6 +155,22 @@ class StartThirdAndFourthPath(StartPath):
         self.start_path(3)
 
     def tick(self):
+        if self.get_path() == 2 and self.check_timer(0.5) and self.finished_path:
+            return WaitForPath(self.ros_node)
+        return self
+
+class WaitForPath(StartPath):
+    """
+    The state which publishes the first path to follow
+    """
+
+    def initialize(self):
+        self.log_state()
+
+    def execute_action(self):
+        pass
+
+    def tick(self):
         if self.get_path() == 3 and self.check_timer(0.5) and self.finished_path:
             return StartFifthPath(self.ros_node)
         return self
