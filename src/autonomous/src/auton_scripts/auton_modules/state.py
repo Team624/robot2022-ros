@@ -76,9 +76,17 @@ class State(object):
 
     def get_point(self):
         return self.ros_node.get_data("/pathTable/status/point")
+    
+    def get_ball_count(self):
+        return self.ros_node.get_data("/auto/numBall")
 
-    def finished_path(self):
-        return self.ros_node.get_data("/pathTable/status/finishedPath")
+    def finished_path(self, path_num):
+        string_array = self.ros_node.get_data("/pathTable/status/finishedPath").split()
+
+        if (string_array[0] == "true" and int(string_array[1]) == path_num):
+            return True
+        else:
+            return False
 
     # This runs in the child class when created
     def initialize(self):

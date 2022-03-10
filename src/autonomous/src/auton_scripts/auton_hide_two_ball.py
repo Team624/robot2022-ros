@@ -71,7 +71,7 @@ class Prime(Shooter):
         self.start_prime()
 
     def tick(self):
-        if self.check_timer(0.5) and self.finished_path() and self.get_path() == 0:
+        if self.check_timer(0.5) and self.finished_path(0):
             return Shoot(self.ros_node)
         return self
 
@@ -89,7 +89,7 @@ class Shoot(Shooter):
     def tick(self):
         if self.check_timer(0.4):
             self.start_shoot()
-        if self.check_timer(1.5):
+        if self.get_ball_count() == 0:
             self.idle()
             return StartSecondAndThirdPath(self.ros_node)
         return self
@@ -139,7 +139,7 @@ class RetractIntake(Intake):
         self.retract_intake()
 
     def tick(self):
-        if self.finished_path() and self.get_path() == 3 and self.check_timer(0.5):
+        if self.finished_path(3) and self.check_timer(0.5):
             return Hide(self.ros_node)
         return self
 
@@ -201,6 +201,7 @@ def start(ros_node):
 
     ros_node.subscribe("/pathTable/status/path", Float32)
     ros_node.subscribe("/pathTable/status/point", Float32)
+    ros_node.subscribe("/auto/numBall", Float32)
     ros_node.subscribe("/pathTable/status/finishedPath", Bool)
 
     # Return the wanted Start and Shutdown state

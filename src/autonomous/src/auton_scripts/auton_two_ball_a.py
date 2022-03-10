@@ -71,7 +71,7 @@ class Prime(Shooter):
         self.start_prime()
 
     def tick(self):
-        if self.check_timer(0.5) and self.finished_path() and self.get_path() == 0:
+        if self.check_timer(0.5) and self.finished_path(0):
             return Shoot(self.ros_node)
         return self
 
@@ -89,7 +89,7 @@ class Shoot(Shooter):
     def tick(self):
         if self.check_timer(0.7):
             self.start_shoot()
-        if self.check_timer(3):
+        if self.get_ball_count() == 0:
             self.idle()
             return Final(self.ros_node)
         return self
@@ -137,6 +137,7 @@ def start(ros_node):
     ros_node.subscribe("/pathTable/status/path", Float32)
     ros_node.subscribe("/pathTable/status/point", Float32)
     ros_node.subscribe("/pathTable/status/finishedPath", Bool)
+    ros_node.subscribe("/auto/numBall", Float32)
 
     # Return the wanted Start and Shutdown state
     return Idle, Shutdown
