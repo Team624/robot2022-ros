@@ -140,10 +140,10 @@ class Shoot2(Shooter):
             self.start_shoot()
             if self.get_ball_count() == 0:
                 self.idle()
-                return StartThirdAndFourthPath(self.ros_node)
+                return StartThirdFourthFifthPath(self.ros_node)
         return self
 
-class StartThirdAndFourthPath(StartPath):
+class StartThirdFourthFifthPath(StartPath):
     """
     The state which publishes the first path to follow
     """
@@ -152,14 +152,14 @@ class StartThirdAndFourthPath(StartPath):
         self.log_state()
 
     def execute_action(self):
-        self.start_path(3)
+        self.start_path(4)
 
     def tick(self):
-        if self.check_timer(0.5) and self.finished_path(3):
-            return StartFifthPath(self.ros_node)
+        if self.check_timer(0.5) and self.finished_path(4):
+            return StartSixthPath(self.ros_node)
         return self
 
-class StartFifthPath(StartPath):
+class StartSixthPath(StartPath):
     """
     The state which publishes the first path to follow
     """
@@ -172,8 +172,8 @@ class StartFifthPath(StartPath):
 
     def tick(self):
         if self.check_timer(1.5):
-            self.start_path(4)
-        if self.check_timer(3.0) and self.get_point() > 15 and self.get_path() == 4:
+            self.start_path(5)
+        if self.check_timer(3.0) and self.get_point() > 15 and self.get_path() == 5:
             return Prime3(self.ros_node)
         return self
 
@@ -189,7 +189,7 @@ class Prime3(Shooter):
         self.start_prime()
 
     def tick(self):
-        if self.check_timer(0.2) and self.finished_path(4):
+        if self.check_timer(0.2) and self.finished_path(5):
             return Shoot3(self.ros_node)
         return self
 
