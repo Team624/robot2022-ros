@@ -1,5 +1,5 @@
 import rospy
-from std_msgs.msg import Float32, Float64, Bool
+from std_msgs.msg import Float32, Float64, Bool, String
 from geometry_msgs.msg import Twist
 from geometry_msgs.msg import PoseWithCovarianceStamped, PoseStamped, Pose
 from nav_msgs.msg import Odometry, Path
@@ -138,9 +138,9 @@ class Shoot2(Shooter):
     def tick(self):
         if self.check_timer(0.7):
             self.start_shoot()
-        if self.get_ball_count() == 0:
-            self.idle()
-            return StartThirdAndFourthPath(self.ros_node)
+            if self.get_ball_count() == 0:
+                self.idle()
+                return StartThirdAndFourthPath(self.ros_node)
         return self
 
 class StartThirdAndFourthPath(StartPath):
@@ -153,22 +153,6 @@ class StartThirdAndFourthPath(StartPath):
 
     def execute_action(self):
         self.start_path(3)
-
-    def tick(self):
-        if self.check_timer(0.5) and self.finished_path(2):
-            return WaitForPath(self.ros_node)
-        return self
-
-class WaitForPath(StartPath):
-    """
-    The state which publishes the first path to follow
-    """
-
-    def initialize(self):
-        self.log_state()
-
-    def execute_action(self):
-        pass
 
     def tick(self):
         if self.check_timer(0.5) and self.finished_path(3):
@@ -270,7 +254,7 @@ def start(ros_node):
 
     ros_node.subscribe("/pathTable/status/path", Float32)
     ros_node.subscribe("/pathTable/status/point", Float32)
-    ros_node.subscribe("/pathTable/status/finishedPath", Bool)
+    ros_node.subscribe("/pathTable/status/finishedPath", String)
     ros_node.subscribe("/auto/numBall", Float32)
 
     # Return the wanted Start and Shutdown state

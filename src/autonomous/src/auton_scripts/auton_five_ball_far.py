@@ -1,5 +1,5 @@
 import rospy
-from std_msgs.msg import Float32, Float64, Bool
+from std_msgs.msg import Float32, Float64, Bool, String
 from geometry_msgs.msg import Twist
 from geometry_msgs.msg import PoseWithCovarianceStamped, PoseStamped, Pose
 from nav_msgs.msg import Odometry, Path
@@ -254,7 +254,7 @@ def start(ros_node):
 
     ros_node.subscribe("/pathTable/status/path", Float32)
     ros_node.subscribe("/pathTable/status/point", Float32)
-    ros_node.subscribe("/pathTable/status/finishedPath", Bool)
+    ros_node.subscribe("/pathTable/status/finishedPath", String)
     ros_node.subscribe("/auto/numBall", Float32)
 
     # Return the wanted Start and Shutdown state
