@@ -105,7 +105,7 @@ class StartSecondThirdPath(StartPath):
 
     def tick(self):
         if self.finished_path(2):
-            return StartFifthPath(self.ros_node)
+            return StartFourthPath(self.ros_node)
         return self
 
 class StartFourthPath(StartPath):
@@ -120,7 +120,7 @@ class StartFourthPath(StartPath):
         pass
 
     def tick(self):
-        if (self.check_timer(0.3)):
+        if (self.check_timer(0.2)):
             self.start_path(3)
         if self.get_path() == 3:
             return StartFifthPath(self.ros_node)
@@ -138,7 +138,7 @@ class StartFifthPath(StartPath):
         pass
 
     def tick(self):
-        if (self.check_timer(0.8)):
+        if (self.check_timer(0.5)):
             self.start_path(4)
         if self.get_path() == 4:
             return Prime2(self.ros_node)
