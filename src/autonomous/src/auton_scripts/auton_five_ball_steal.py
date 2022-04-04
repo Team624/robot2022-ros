@@ -7,7 +7,7 @@ import time
 from auton_modules.path import AutoPath, AutoGoal
 from diff_drive.msg import Goal, GoalPath, Constants, Linear, Angular, BoolArray
 
-from auton_modules.state import SetIdle, State, StartPath, Intake, Shooter, Hood, Flywheel
+from auton_modules.state import SetIdle, State, StartPath, Intake, Shooter, Hood, Flywheel, Color
 
 # The id of the auton, used for picking auton
 auton_id = 5
@@ -87,9 +87,9 @@ class Shoot1(Shooter):
     def tick(self):
         if self.check_timer(0.6):
             self.start_shoot()
-        if self.get_ball_count() == 0:
-            self.idle()
-            return StartSecondPath(self.ros_node)
+            if self.get_ball_count() == 0:
+                self.idle()
+                return StartSecondPath(self.ros_node)
         return self
 
 class StartSecondPath(StartPath):
@@ -121,6 +121,22 @@ class Prime2(Shooter):
 
     def tick(self):
         if self.finished_path(1):
+            return WaitForBall(self.ros_node)
+        return self
+
+class WaitForBall(Shooter):
+    """
+    The state which publishes the first path to follow
+    """
+
+    def initialize(self):
+        self.log_state()
+
+    def execute_action(self):
+        pass
+
+    def tick(self):
+        if self.get_ball_count() >= 1 or self.check_timer(2):
             return Shoot2(self.ros_node)
         return self
 
@@ -136,7 +152,7 @@ class Shoot2(Shooter):
         pass
 
     def tick(self):
-        if self.check_timer(0.7):
+        if self.check_timer(0.3):
             self.start_shoot()
             if self.get_ball_count() == 0:
                 self.idle()
@@ -173,8 +189,8 @@ class StartSixthPath(StartPath):
     def tick(self):
         if self.check_timer(1.0):
             self.start_path(5)
-        if self.check_timer(3.0) and self.get_point() > 15 and self.get_path() == 5:
-            return Prime3(self.ros_node)
+            if self.check_timer(3.0) and self.get_point() > 15 and self.get_path() == 5:
+                return Prime3(self.ros_node)
         return self
 
 class Prime3(Shooter):
@@ -207,10 +223,69 @@ class Shoot3(Shooter):
     def tick(self):
         if self.check_timer(0.6):
             self.start_shoot()
+            if self.get_ball_count() == 0:
+                return DisableColor(self.ros_node)
+        return self
+
+class DisableColor(Color):
+    """
+    The state which waits for the second waypoint of the path.
+    """
+
+    def initialize(self):
+        self.log_state()
+
+    def execute_action(self):
+        self.disable_color()
+
+    def tick(self):
+        return StartSeventhPath(self.ros_node)
+
+class StartSeventhPath(StartPath):
+    """
+    The state which publishes the first path to follow
+    """
+
+    def initialize(self):
+        self.log_state()
+
+    def execute_action(self):
+        self.start_path(6)
+
+    def tick(self):
+        return PrimeLob(self.ros_node)
+
+class PrimeLob(Shooter):
+    """
+    The state which publishes the first path to follow
+    """
+
+    def initialize(self):
+        self.log_state()
+
+    def execute_action(self):
+        self.lob_prime()
+
+    def tick(self):
+        if self.finished_path(6):
+            return ShootLob(self.ros_node)
+        return self
+
+class ShootLob(Shooter):
+    """
+    The state which publishes the first path to follow
+    """
+
+    def initialize(self):
+        self.log_state()
+
+    def execute_action(self):
+        self.lob_shoot()
+
+    def tick(self):
         if self.get_ball_count() == 0:
             return Final(self.ros_node)
         return self
-
 
 class Final(State):
     """
