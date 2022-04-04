@@ -187,7 +187,7 @@ class StartSixthPath(StartPath):
         pass
 
     def tick(self):
-        if self.check_timer(1.0):
+        if self.check_timer(0.6):
             self.start_path(5)
             if self.check_timer(3.0) and self.get_point() > 15 and self.get_path() == 5:
                 return Prime3(self.ros_node)
@@ -224,22 +224,9 @@ class Shoot3(Shooter):
         if self.check_timer(0.6):
             self.start_shoot()
             if self.get_ball_count() == 0:
-                return DisableColor(self.ros_node)
+                self.idle()
+                return StartSeventhPath(self.ros_node)
         return self
-
-class DisableColor(Color):
-    """
-    The state which waits for the second waypoint of the path.
-    """
-
-    def initialize(self):
-        self.log_state()
-
-    def execute_action(self):
-        self.disable_color()
-
-    def tick(self):
-        return StartSeventhPath(self.ros_node)
 
 class StartSeventhPath(StartPath):
     """
@@ -253,37 +240,7 @@ class StartSeventhPath(StartPath):
         self.start_path(6)
 
     def tick(self):
-        return PrimeLob(self.ros_node)
-
-class PrimeLob(Shooter):
-    """
-    The state which publishes the first path to follow
-    """
-
-    def initialize(self):
-        self.log_state()
-
-    def execute_action(self):
-        self.lob_prime()
-
-    def tick(self):
         if self.finished_path(6):
-            return ShootLob(self.ros_node)
-        return self
-
-class ShootLob(Shooter):
-    """
-    The state which publishes the first path to follow
-    """
-
-    def initialize(self):
-        self.log_state()
-
-    def execute_action(self):
-        self.lob_shoot()
-
-    def tick(self):
-        if self.get_ball_count() == 0:
             return Final(self.ros_node)
         return self
 

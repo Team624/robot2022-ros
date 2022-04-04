@@ -121,7 +121,7 @@ class StartSecondPath(StartPath):
         self.start_path(1)
 
     def tick(self):
-        if self.finished_path(1) or self.get_ball_count() == 1:
+        if (self.finished_path(1) or self.get_ball_count() == 1) and self.check_timer(1.0):
             return RetractIntake(self.ros_node)
         return self
 
