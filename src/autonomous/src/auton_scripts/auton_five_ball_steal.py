@@ -10,8 +10,8 @@ from diff_drive.msg import Goal, GoalPath, Constants, Linear, Angular, BoolArray
 from auton_modules.state import SetIdle, State, StartPath, Intake, Shooter, Hood, Flywheel
 
 # The id of the auton, used for picking auton
-auton_id = 4
-auton_title = "Auton Five Ball"
+auton_id = 5
+auton_title = "Auton Five Ball Steal"
 
 # Start of our states
 class Idle(SetIdle):

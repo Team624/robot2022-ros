@@ -177,6 +177,25 @@ class Intake(State):
         self.ros_node.publish("/auto/intake/state", String, intake_state, latching = True)
         rospy.loginfo("Retracted Intake")
 
+class Color(State):
+
+    # Actions
+    def enable_color(self):
+        """ This publishes a msg to deploy the intake """
+        color_state = String()
+        color_state.data = "enable"
+
+        self.ros_node.publish("/auto/color/state", String, color_state, latching = True)
+        rospy.loginfo("Enabled Color Sensor")
+
+    def disable_color(self):
+        """ This publishes a msg to retract the intake """
+        color_state = String()
+        color_state.data = "disable"
+
+        self.ros_node.publish("/auto/color/state", String, color_state, latching = True)
+        rospy.loginfo("Disabled Color Sensor")
+
 class Shooter(State):
 
     # This puts the shooter in idle mode and allows other sub systems to do specific functions
@@ -189,21 +208,37 @@ class Shooter(State):
         rospy.loginfo("Shooter Idle")
     
     # Overrides the other states because it needs to control all three subsystems 
-    def start_hide(self):
-        """ This starts the turret tracking, adjusting rpm, and hood angle """
-        shooter_state = String()
-        shooter_state.data = "hide"
-
-        self.ros_node.publish("/auto/shooter/state", String, shooter_state, latching = True)
-        rospy.loginfo("Shooter Hide")
-
-    def start_hide_shoot(self):
+    def hide_shoot(self):
         """ This starts the turret tracking, adjusting rpm, and hood angle """
         shooter_state = String()
         shooter_state.data = "hide_shoot"
 
         self.ros_node.publish("/auto/shooter/state", String, shooter_state, latching = True)
         rospy.loginfo("Shooter Hide Shoot")
+    
+    def hide_poop(self):
+        """ This starts the turret tracking, adjusting rpm, and hood angle """
+        shooter_state = String()
+        shooter_state.data = "hide_poop"
+
+        self.ros_node.publish("/auto/shooter/state", String, shooter_state, latching = True)
+        rospy.loginfo("Shooter Hide Poop")
+
+    def lob_prime(self):
+        """ This starts the turret tracking, adjusting rpm, and hood angle """
+        shooter_state = String()
+        shooter_state.data = "lob_prime"
+
+        self.ros_node.publish("/auto/shooter/state", String, shooter_state, latching = True)
+        rospy.loginfo("Shooter Lob Prime")
+
+    def lob_shoot(self):
+        """ This starts the turret tracking, adjusting rpm, and hood angle """
+        shooter_state = String()
+        shooter_state.data = "lob_shoot"
+
+        self.ros_node.publish("/auto/shooter/state", String, shooter_state, latching = True)
+        rospy.loginfo("Shooter Lob Shoot")
 
     def start_prime(self):
         """ This starts the turret tracking, adjusting rpm, and hood angle """
