@@ -103,13 +103,13 @@ class Shoot(Shooter):
     def tick(self):
         if self.check_timer(0.4):
             self.start_shoot()
-        if self.get_ball_count() == 0:
+        if self.get_ball_count() == 0 and self.check_timer(0.8):
             self.idle()
-            return StartSecondPath(self.ros_node)
+            return StartSecondThirdPath(self.ros_node)
         return self
 
 
-class StartSecondPath(StartPath):
+class StartSecondThirdPath(StartPath):
     """
     The state which publishes the first path to follow
     """
@@ -118,10 +118,10 @@ class StartSecondPath(StartPath):
         self.log_state()
 
     def execute_action(self):
-        self.start_path(1)
+        self.start_path(2)
 
     def tick(self):
-        if (self.finished_path(1) or self.get_ball_count() == 1) and self.check_timer(1.0):
+        if (self.get_ball_count() == 1):
             return RetractIntake(self.ros_node)
         return self
 
@@ -137,23 +137,7 @@ class RetractIntake(Intake):
         self.retract_intake()
 
     def tick(self):
-        if self.finished_path(1):
-            return EnableColor(self.ros_node)
-        return self
-
-class EnableColor(Color):
-    """
-    The state which publishes the first path to follow
-    """
-
-    def initialize(self):
-        self.log_state()
-
-    def execute_action(self):
-        self.enable_color()
-
-    def tick(self):
-        if self.finished_path(1):
+        if self.finished_path(2):
             return Hide(self.ros_node)
         return self
 
@@ -169,12 +153,12 @@ class Hide(Shooter):
         self.hide_poop()
 
     def tick(self):
-        if self.check_timer(1) and self.get_ball_count() == 0:
+        if self.check_timer(0.7) and self.get_ball_count() == 0:
             self.idle()
-            return StartThirdAndFourthPath(self.ros_node)
+            return DeployIntake2(self.ros_node)
         return self
 
-class StartThirdAndFourthPath(StartPath):
+class DeployIntake2(Intake):
     """
     The state which publishes the first path to follow
     """
@@ -183,12 +167,73 @@ class StartThirdAndFourthPath(StartPath):
         self.log_state()
 
     def execute_action(self):
-        self.start_path(3)
+        self.deploy_intake()
 
     def tick(self):
-        if self.get_ball_count() >= 1:
-            return Prime2(self.ros_node)
+        if (self.check_timer(0.5)):
+            return StartFourthFifthPath(self.ros_node)
         return self
+
+class StartFourthFifthPath(StartPath):
+    """
+    The state which publishes the first path to follow
+    """
+
+    def initialize(self):
+        self.log_state()
+
+    def execute_action(self):
+        self.start_path(4)
+
+    def tick(self):
+        return PrimeHide2(self.ros_node)
+
+class PrimeHide2(Shooter):
+    """
+    The state which publishes the first path to follow
+    """
+
+    def initialize(self):
+        self.log_state()
+
+    def execute_action(self):
+        self.lob_prime()
+
+    def tick(self):
+        if self.finished_path(4):
+            return ShootHide2(self.ros_node)
+        return self
+
+class ShootHide2(Shooter):
+    """
+    The state which publishes the first path to follow
+    """
+
+    def initialize(self):
+        self.log_state()
+
+    def execute_action(self):
+        self.lob_shoot()
+
+    def tick(self):
+        if self.check_timer(0.3):
+            self.idle()
+            return StartSixthPath(self.ros_node)
+        return self
+
+class StartSixthPath(StartPath):
+    """
+    The state which publishes the first path to follow
+    """
+
+    def initialize(self):
+        self.log_state()
+
+    def execute_action(self):
+        self.start_path(5)
+
+    def tick(self):
+        return Prime2(self.ros_node)
 
 class Prime2(Shooter):
     """
@@ -202,7 +247,7 @@ class Prime2(Shooter):
         self.start_prime()
 
     def tick(self):
-        if self.check_timer(0.5) and self.finished_path(3):
+        if self.finished_path(5):
             return Shoot2(self.ros_node)
         return self
 
@@ -218,9 +263,9 @@ class Shoot2(Shooter):
         pass
 
     def tick(self):
-        if self.check_timer(0.5):
+        if self.check_timer(1.1):
             self.start_shoot()
-        if self.get_ball_count() == 0:
+        if self.check_timer(2.5):
             self.idle()
             return Final(self.ros_node)
         return self
