@@ -4,7 +4,7 @@ import rospy
 from std_msgs.msg import Float32, Float64, Bool, String, Float32MultiArray
 from geometry_msgs.msg import Pose, PoseWithCovarianceStamped
 from diff_drive.msg import Goal, GoalPath, Constants, Linear, Angular
-from path import AutoGoal, AutoPath, Autons
+from .path import AutoGoal, AutoPath, Autons
 import time
 import rospkg 
 import math

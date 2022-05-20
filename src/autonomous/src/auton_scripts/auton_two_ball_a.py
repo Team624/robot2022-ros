@@ -4,10 +4,10 @@ from geometry_msgs.msg import Twist
 from geometry_msgs.msg import PoseWithCovarianceStamped, PoseStamped, Pose
 from nav_msgs.msg import Odometry, Path
 import time
-from auton_modules.path import AutoPath, AutoGoal
+from .auton_modules.path import AutoPath, AutoGoal
 from diff_drive.msg import Goal, GoalPath, Constants, Linear, Angular, BoolArray
 
-from auton_modules.state import SetIdle, State, StartPath, Intake, Shooter, Hood, Flywheel
+from .auton_modules.state import SetIdle, State, StartPath, Intake, Shooter, Hood, Flywheel
 
 # The id of the auton, used for picking auton
 auton_id = 1
