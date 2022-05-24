@@ -4,14 +4,11 @@ from geometry_msgs.msg import Twist
 from geometry_msgs.msg import PoseWithCovarianceStamped, PoseStamped, Pose
 from nav_msgs.msg import Odometry, Path
 import time
-from auton_modules.path import AutoPath, AutoGoal
+from .auton_modules.path import AutoPath, AutoGoal
 from diff_drive.msg import Goal, GoalPath, Constants, Linear, Angular, BoolArray
 
-from auton_modules.state import SetIdle, State, StartPath, Intake, Shooter, Hood, Flywheel
+from .auton_modules.state import SetIdle, State, StartPath, Intake, Shooter, Hood, Flywheel
 
-
-
-from auton_modules.state import SetIdle, State, StartPath, Intake, Shooter, Hood, Flywheel
 
 # The id of the auton, used for picking auton
 auton_id = 9
@@ -85,7 +82,7 @@ class Shoot1(Shooter):
     def tick(self):
         if self.check_timer(0.5):
             self.start_shoot()
-        if self.finished_path(0):
+        if self.finished_path(0) and self.check_timer(0.8):
             return RetractIntake(self.ros_node)  
         return self
 

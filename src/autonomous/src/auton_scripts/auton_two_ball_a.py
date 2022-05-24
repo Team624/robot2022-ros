@@ -9,6 +9,7 @@ from diff_drive.msg import Goal, GoalPath, Constants, Linear, Angular, BoolArray
 
 from .auton_modules.state import SetIdle, State, StartPath, Intake, Shooter, Hood, Flywheel
 
+
 # The id of the auton, used for picking auton
 auton_id = 1
 auton_title = "Auton Two Ball A"
