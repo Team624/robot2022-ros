@@ -95,7 +95,7 @@ class RetractIntake(Intake):
         self.retract_intake()
 
     def tick(self):
-        if self.finished_path(0) and self.get_ball_count()==0:
+        if self.get_ball_count()==0:
             return StartSecondPath(self.ros_node)
         return self
 
