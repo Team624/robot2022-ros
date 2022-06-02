@@ -9,7 +9,7 @@ body
     height: 100vh;
     background-size: cover;
     background-position: center;
-    background-image:linear-gradient(rgba(0, 0, 0, 0.657),rgba(0,0,0,0.5)), url(robot_home_dark.jpg);
+    background-image:linear-gradient(rgba(0, 0, 0, 0.657),rgba(0,0,0,0.5)), url(SMB.JPG);
     background-color: aliceblue;
 }
 
@@ -75,8 +75,8 @@ body
     width: 300px;
     height: auto;
     position: absolute;
-    left: 1550px;
-    top: -25px;
+    left: 1300px;
+    top: 10px;
     border-radius: 50%;
 }
 

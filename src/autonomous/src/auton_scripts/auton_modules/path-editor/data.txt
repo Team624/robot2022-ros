@@ -4828,8 +4828,8 @@
     },
     {
         "id": 9,
-        "title": "Auton Two Ball B",
-        "num_balls": "2",
+        "title": "Auton Three Ball B",
+        "num_balls": "3",
         "start_pose": [
             6.507078947368421,
             -5.778886775527049,
