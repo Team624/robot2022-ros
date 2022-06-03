@@ -11,7 +11,7 @@ from .auton_modules.state import SetIdle, State, StartPath, Intake, Shooter, Hoo
 
 
 # The id of the auton, used for picking auton
-auton_id = 11
+auton_id = 9
 auton_title = "Auton Five Ball B"
 
 # Start of our states
@@ -248,7 +248,7 @@ class Prime3(Shooter):
         self.start_prime()
 
     def tick(self):
-        if self.check_timer(0.5) and self.finished_path(5):
+        if self.finished_path(5):
             return Shoot2(self.ros_node)
         return self
 
@@ -264,10 +264,10 @@ class Shoot3(Shooter):
         pass
 
     def tick(self):
-        if self.check_timer(0.7):
+        if self.check_timer(0.5):
             self.start_shoot()
-            self.idle()
         if self.get_ball_count() == 0:
+            self.idle()
             return Final(self.ros_node)
         return self
         

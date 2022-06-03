@@ -11,7 +11,7 @@ from .auton_modules.state import SetIdle, State, StartPath, Intake, Shooter, Hoo
 
 
 # The id of the auton, used for picking auton
-auton_id = 9
+auton_id = 11
 auton_title = "Auton Three Ball B"
 
 # Start of our states
@@ -154,7 +154,7 @@ class Shoot2(Shooter):
         pass
 
     def tick(self):
-        if self.check_timer(0.2):
+        if self.check_timer(0.4):
             self.start_shoot() 
         if self.get_ball_count() == 0:
             self.idle()
