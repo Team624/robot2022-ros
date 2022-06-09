@@ -168,7 +168,11 @@ class StartFourthPath(StartPath):
         if self.finished_path(3):
             return StartFifthpath(self.ros_node)
         return self
-        
+
+
+
+
+
 class StartFifthpath(StartPath):
     """
     The state which publishes the first path to follow
@@ -181,7 +185,7 @@ class StartFifthpath(StartPath):
         self.start_path(4)
 
     def tick(self):
-        if self.finished_path(4):
+        if self.check_timer(3.5):
             return Prime2(self.ros_node)
         return self
 
@@ -197,8 +201,8 @@ class Prime2(Shooter):
         self.start_prime()
 
     def tick(self):
-        if self.check_timer(0.5) and self.finished_path(4):
-            return Shoot2(self.ros_node)
+        if self.finished_path(4):
+            return Shoot1(self.ros_node)
         return self
 
 class Shoot2(Shooter):
@@ -220,6 +224,8 @@ class Shoot2(Shooter):
                 return StartSixthpath(self.ros_node)
         return self
 
+
+
 class StartSixthpath(StartPath):
     """
     The state which publishes the first path to follow
@@ -230,12 +236,12 @@ class StartSixthpath(StartPath):
 
     def execute_action(self):
         self.start_path(5)
-       
-
     def tick(self):
-        if self.check_timer(0.5) and self.finished_path(5):
+        if self.finished_path(5):
             return Final(self.ros_node)
-        return self  
+        return self
+        
+
 
 class Final(State):
     """
