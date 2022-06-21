@@ -238,9 +238,43 @@ class StartSixthpath(StartPath):
         self.start_path(5)
     def tick(self):
         if self.finished_path(5):
-            return Final(self.ros_node)
+            return Prime3(self.ros_node)
         return self
-        
+
+class Prime3(Shooter):
+    """
+    The state which publishes the first path to follow
+    """
+
+    def initialize(self):
+        self.log_state()
+
+    def execute_action(self):
+        self.start_prime()
+
+    def tick(self):
+        if self.finished_path(5):
+            return Shoot3(self.ros_node)
+        return self
+
+class Shoot3(Shooter):
+    """
+    The state which publishes the first path to follow
+    """
+
+    def initialize(self):
+        self.log_state()
+
+    def execute_action(self):
+        pass
+
+    def tick(self):
+        if self.check_timer(0.7):
+            self.start_shoot()
+            if self.get_ball_count() == 0:
+                self.idle()
+                return Final(self.ros_node)
+        return self        
 
 
 class Final(State):

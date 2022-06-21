@@ -120,7 +120,7 @@ class Proxy:
         
 
         # Modify first and last point to smoothly increase velocity
-        smooth_constant = 4.0 
+        smooth_constant = 5.0 
         distances[0] *= smooth_constant
         distances[len(msg.goals)-1] *= smooth_constant
         total_dist = sum(distances)
