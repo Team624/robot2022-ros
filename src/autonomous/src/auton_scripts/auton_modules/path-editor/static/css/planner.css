@@ -189,7 +189,7 @@
 .field_img
 {
     opacity: 70%;
-    width: 90%;
+    width: auto;
     height: 93%;
     position: fixed;
     top: 50%;
