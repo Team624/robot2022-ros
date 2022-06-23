@@ -237,9 +237,8 @@ class StartSixthpath(StartPath):
     def execute_action(self):
         self.start_path(5)
     def tick(self):
-        if self.finished_path(5):
-            return Prime3(self.ros_node)
-        return self
+        return Prime3(self.ros_node)
+    
 
 class Prime3(Shooter):
     """
@@ -269,7 +268,7 @@ class Shoot3(Shooter):
         pass
 
     def tick(self):
-        if self.check_timer(0.7):
+        if self.check_timer(0.5):
             self.start_shoot()
             if self.get_ball_count() == 0:
                 self.idle()
