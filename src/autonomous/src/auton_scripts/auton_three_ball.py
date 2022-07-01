@@ -216,7 +216,7 @@ class ShootHide2(Shooter):
         self.lob_shoot()
 
     def tick(self):
-        if self.check_timer(0.3):
+        if self.check_timer(0.3) and self.get_ball_count(1):
             self.idle()
             return StartSixthPath(self.ros_node)
         return self
