@@ -202,9 +202,7 @@ class PrimeHide2(Shooter):
         self.lob_prime()
 
     def tick(self):
-        if self.finished_path(4):
-            return ShootHide2(self.ros_node)
-        return self
+        return ShootHide2(self.ros_node)
 
 class ShootHide2(Shooter):
     """
@@ -218,7 +216,7 @@ class ShootHide2(Shooter):
         self.lob_shoot()
 
     def tick(self):
-        if self.get_ball_count(1):
+        if self.get_ball_count() == 1:
             self.idle()
             return StartSixthPath(self.ros_node)
         return self
