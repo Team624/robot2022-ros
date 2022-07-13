@@ -186,7 +186,9 @@ class StartFourthFifthPath(StartPath):
         self.start_path(4)
 
     def tick(self):
-        return PrimeHide2(self.ros_node)
+        if self.finished_path(4):
+            return PrimeHide2(self.ros_node)
+        return self
 
 class PrimeHide2(Shooter):
     """
@@ -216,7 +218,7 @@ class ShootHide2(Shooter):
         self.lob_shoot()
 
     def tick(self):
-        if self.check_timer(0.3) and self.get_ball_count(1):
+        if self.get_ball_count(1):
             self.idle()
             return StartSixthPath(self.ros_node)
         return self
