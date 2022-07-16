@@ -7,7 +7,7 @@ import time
 from .auton_modules.path import AutoPath, AutoGoal
 from diff_drive.msg import Goal, GoalPath, Constants, Linear, Angular, BoolArray
 
-from .auton_modules.state import SetIdle, State, StartPath, Intake, Shooter, Hood, Flywheel
+from .auton_modules.state import SetIdle, State, StartPath, Intake, Shooter, Hood, Flywheel,Color
 
 # The id of the auton, used for picking auton
 auton_id = 2
@@ -25,6 +25,20 @@ class Idle(SetIdle):
     def execute_action(self):
         self.setRobotPose()
         self.setIdle()
+
+    def tick(self):
+        return DisableColor(self.ros_node)
+
+class DisableColor(Color):
+    """
+    The state which waits for the second waypoint of the path.
+    """
+
+    def initialize(self):
+        self.log_state()
+
+    def execute_action(self):
+        self.disable_color()
 
     def tick(self):
         return DeployIntake(self.ros_node)

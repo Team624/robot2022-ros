@@ -7,12 +7,12 @@ import time
 from .auton_modules.path import AutoPath, AutoGoal
 from diff_drive.msg import Goal, GoalPath, Constants, Linear, Angular, BoolArray
 
-from .auton_modules.state import SetIdle, State, StartPath, Intake, Shooter, Hood, Flywheel, Color
+from .auton_modules.state import SetIdle, State, StartPath, Intake, Shooter, Hood, Flywheel
 
 
 # The id of the auton, used for picking auton
-auton_id = 1
-auton_title = "Auton Two Ball A"
+auton_id = 13
+auton_title = "Auton One Ball C Hub"
 
 # Start of our states
 class Idle(SetIdle):
@@ -28,21 +28,8 @@ class Idle(SetIdle):
         self.setIdle()
 
     def tick(self):
-        return DisableColor(self.ros_node)
-
-class DisableColor(Color):
-    """
-    The state which waits for the second waypoint of the path.
-    """
-
-    def initialize(self):
-        self.log_state()
-
-    def execute_action(self):
-        self.disable_color()
-
-    def tick(self):
         return DeployIntake(self.ros_node)
+
 
 class DeployIntake(Intake):
     """
@@ -56,7 +43,24 @@ class DeployIntake(Intake):
         self.deploy_intake()
 
     def tick(self):
-        return StartFirstPath(self.ros_node)
+        return RetractIntake(self.ros_node)
+
+
+class RetractIntake(Intake):
+    """
+    The state which publishes the first path to follow
+    """
+
+    def initialize(self):
+        self.log_state()
+
+    def execute_action(self):
+        self.retract_intake()
+
+    def tick(self):
+        if self.check_timer(8):
+            return StartFirstPath(self.ros_node)
+        return self
 
 class StartFirstPath(StartPath):
     """
@@ -70,7 +74,7 @@ class StartFirstPath(StartPath):
         self.start_path(0)
 
     def tick(self):
-        if self.check_timer(0.5) and self.get_point() > 12:
+        if self.check_timer(0.5):
             return Prime(self.ros_node)
         return self
 
