@@ -103,7 +103,7 @@ class Shoot(Shooter):
     def tick(self):
         if self.check_timer(0.7):
             self.start_shoot()
-        if self.get_ball_count() == 0:
+        if self.get_ball_count() == 0 and self.check_timer(1.5):
             self.idle()
             return StartSecondPath(self.ros_node)
         return self

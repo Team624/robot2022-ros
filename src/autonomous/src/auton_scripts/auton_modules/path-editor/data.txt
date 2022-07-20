@@ -1278,7 +1278,7 @@
             {
                 "id": 1,
                 "name": "Path 11",
-                "constants_kP": 1.7,
+                "constants_kP": 1.85,
                 "constants_kA": 1.57,
                 "constants_kB": 0.55,
                 "max_linear_speed": 25,
