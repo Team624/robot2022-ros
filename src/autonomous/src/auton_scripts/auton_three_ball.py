@@ -4,10 +4,10 @@ from geometry_msgs.msg import Twist
 from geometry_msgs.msg import PoseWithCovarianceStamped, PoseStamped, Pose
 from nav_msgs.msg import Odometry, Path
 import time
-from auton_modules.path import AutoPath, AutoGoal
+from .auton_modules.path import AutoPath, AutoGoal
 from diff_drive.msg import Goal, GoalPath, Constants, Linear, Angular, BoolArray
 
-from auton_modules.state import SetIdle, State, StartPath, Intake, Shooter, Hood, Flywheel, Color
+from .auton_modules.state import SetIdle, State, StartPath, Intake, Shooter, Hood, Flywheel, Color
 
 # The id of the auton, used for picking auton
 auton_id = 8
@@ -186,7 +186,9 @@ class StartFourthFifthPath(StartPath):
         self.start_path(4)
 
     def tick(self):
-        return PrimeHide2(self.ros_node)
+        if self.finished_path(4):
+            return PrimeHide2(self.ros_node)
+        return self
 
 class PrimeHide2(Shooter):
     """
@@ -200,9 +202,7 @@ class PrimeHide2(Shooter):
         self.lob_prime()
 
     def tick(self):
-        if self.finished_path(4):
-            return ShootHide2(self.ros_node)
-        return self
+        return ShootHide2(self.ros_node)
 
 class ShootHide2(Shooter):
     """
@@ -216,7 +216,9 @@ class ShootHide2(Shooter):
         self.lob_shoot()
 
     def tick(self):
-        if self.check_timer(0.3):
+        
+        if self.get_ball_count() == 1 or self.check_timer(0.2):
+            print("have one ball")
             self.idle()
             return StartSixthPath(self.ros_node)
         return self

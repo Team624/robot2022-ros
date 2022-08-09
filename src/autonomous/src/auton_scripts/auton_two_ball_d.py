@@ -4,10 +4,10 @@ from geometry_msgs.msg import Twist
 from geometry_msgs.msg import PoseWithCovarianceStamped, PoseStamped, Pose
 from nav_msgs.msg import Odometry, Path
 import time
-from auton_modules.path import AutoPath, AutoGoal
+from .auton_modules.path import AutoPath, AutoGoal
 from diff_drive.msg import Goal, GoalPath, Constants, Linear, Angular, BoolArray
 
-from auton_modules.state import SetIdle, State, StartPath, Intake, Shooter, Hood, Flywheel
+from .auton_modules.state import SetIdle, State, StartPath, Intake, Shooter, Hood, Flywheel,Color
 
 # The id of the auton, used for picking auton
 auton_id = 2
@@ -25,6 +25,20 @@ class Idle(SetIdle):
     def execute_action(self):
         self.setRobotPose()
         self.setIdle()
+
+    def tick(self):
+        return DisableColor(self.ros_node)
+
+class DisableColor(Color):
+    """
+    The state which waits for the second waypoint of the path.
+    """
+
+    def initialize(self):
+        self.log_state()
+
+    def execute_action(self):
+        self.disable_color()
 
     def tick(self):
         return DeployIntake(self.ros_node)
@@ -89,7 +103,7 @@ class Shoot(Shooter):
     def tick(self):
         if self.check_timer(0.7):
             self.start_shoot()
-        if self.get_ball_count() == 0:
+        if self.get_ball_count() == 0 and self.check_timer(1.5):
             self.idle()
             return StartSecondPath(self.ros_node)
         return self

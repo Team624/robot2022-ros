@@ -7,11 +7,12 @@ import time
 from .auton_modules.path import AutoPath, AutoGoal
 from diff_drive.msg import Goal, GoalPath, Constants, Linear, Angular, BoolArray
 
-from .auton_modules.state import SetIdle, State, StartPath, Intake, Shooter, Hood, Flywheel, Color
+from .auton_modules.state import SetIdle, State, StartPath, Intake, Shooter, Hood, Flywheel
+
 
 # The id of the auton, used for picking auton
-auton_id = 7
-auton_title = "Auton Hide Two Ball"
+auton_id = 9
+auton_title = "Auton Five Ball B"
 
 # Start of our states
 class Idle(SetIdle):
@@ -27,23 +28,9 @@ class Idle(SetIdle):
         self.setIdle()
 
     def tick(self):
-        return DisableColor(self.ros_node)
+        return DeployIntake1(self.ros_node)
 
-class DisableColor(Color):
-    """
-    The state which waits for the second waypoint of the path.
-    """
-
-    def initialize(self):
-        self.log_state()
-
-    def execute_action(self):
-        self.disable_color()
-
-    def tick(self):
-        return DeployIntake(self.ros_node)
-
-class DeployIntake(Intake):
+class DeployIntake1(Intake):
     """
     The state which waits for the second waypoint of the path.
     """
@@ -69,11 +56,11 @@ class StartFirstPath(StartPath):
         self.start_path(0)
 
     def tick(self):
-        if self.check_timer(0.5) and self.get_point() > 12:
-            return Prime(self.ros_node)
+        if self.check_timer(0.5):
+            return Prime1(self.ros_node)
         return self
 
-class Prime(Shooter):
+class Prime1(Shooter):
     """
     The state which publishes the first path to follow
     """
@@ -86,10 +73,10 @@ class Prime(Shooter):
 
     def tick(self):
         if self.check_timer(0.5) and self.finished_path(0):
-            return Shoot(self.ros_node)
+            return Shoot1(self.ros_node)
         return self
 
-class Shoot(Shooter):
+class Shoot1(Shooter):
     """
     The state which publishes the first path to follow
     """
@@ -101,15 +88,56 @@ class Shoot(Shooter):
         pass
 
     def tick(self):
-        if self.check_timer(0.4):
+        if self.check_timer(0.7):
             self.start_shoot()
-        if self.get_ball_count() == 0:
-            self.idle()
-            return StartSecondAndThirdPath(self.ros_node)
+            if self.get_ball_count() == 0:
+                self.idle()
+                return RetractIntake1(self.ros_node)
         return self
 
+class RetractIntake1(Intake):
+   
+    def initialize(self):
+        self.log_state()
 
-class StartSecondAndThirdPath(StartPath):
+    def execute_action(self):
+        self.retract_intake()
+
+    def tick(self):
+        return StartSecondPath(self.ros_node)
+        
+
+class StartSecondPath(StartPath):
+    """
+    The state which publishes the first path to follow
+    """
+
+    def initialize(self):
+        self.log_state()
+
+    def execute_action(self):
+        self.start_path(1)
+
+    def tick(self):
+        if self.finished_path(1):
+            return DeployIntake2(self.ros_node)
+        return self
+
+class DeployIntake2(Intake):
+    """
+    The state which waits for the second waypoint of the path.
+    """
+
+    def initialize(self):
+        self.log_state()
+
+    def execute_action(self):
+        self.deploy_intake()
+
+    def tick(self):
+        return StartThirdPath(self.ros_node)
+
+class StartThirdPath(StartPath):
     """
     The state which publishes the first path to follow
     """
@@ -121,7 +149,7 @@ class StartSecondAndThirdPath(StartPath):
         self.start_path(2)
 
     def tick(self):
-        if self.check_timer(1):
+        if self.finished_path(2):
             return StartFourthPath(self.ros_node)
         return self
 
@@ -137,11 +165,15 @@ class StartFourthPath(StartPath):
         self.start_path(3)
 
     def tick(self):
-        if (self.get_path() == 3):
-            return RetractIntake(self.ros_node)
+        if self.finished_path(3):
+            return StartFifthpath(self.ros_node)
         return self
 
-class RetractIntake(Intake):
+
+
+
+
+class StartFifthpath(StartPath):
     """
     The state which publishes the first path to follow
     """
@@ -150,14 +182,14 @@ class RetractIntake(Intake):
         self.log_state()
 
     def execute_action(self):
-        self.retract_intake()
+        self.start_path(4)
 
     def tick(self):
-        if self.finished_path(3) and self.check_timer(0.5):
-            return Hide(self.ros_node)
+        if self.check_timer(3.5):
+            return Prime2(self.ros_node)
         return self
 
-class Hide(Shooter):
+class Prime2(Shooter):
     """
     The state which publishes the first path to follow
     """
@@ -166,12 +198,83 @@ class Hide(Shooter):
         self.log_state()
 
     def execute_action(self):
-        self.hide_shoot()
+        self.start_prime()
 
     def tick(self):
-        if self.check_timer(2):
-            return Final(self.ros_node)
+        if self.finished_path(4):
+            return Shoot1(self.ros_node)
         return self
+
+class Shoot2(Shooter):
+    """
+    The state which publishes the first path to follow
+    """
+
+    def initialize(self):
+        self.log_state()
+
+    def execute_action(self):
+        pass
+
+    def tick(self):
+        if self.check_timer(0.7):
+            self.start_shoot()
+            if self.get_ball_count() == 0:
+                self.idle()
+                return StartSixthpath(self.ros_node)
+        return self
+
+
+
+class StartSixthpath(StartPath):
+    """
+    The state which publishes the first path to follow
+    """
+
+    def initialize(self):
+        self.log_state()
+
+    def execute_action(self):
+        self.start_path(5)
+    def tick(self):
+        return Prime3(self.ros_node)
+    
+
+class Prime3(Shooter):
+    """
+    The state which publishes the first path to follow
+    """
+
+    def initialize(self):
+        self.log_state()
+
+    def execute_action(self):
+        self.start_prime()
+
+    def tick(self):
+        if self.finished_path(5):
+            return Shoot3(self.ros_node)
+        return self
+
+class Shoot3(Shooter):
+    """
+    The state which publishes the first path to follow
+    """
+
+    def initialize(self):
+        self.log_state()
+
+    def execute_action(self):
+        pass
+
+    def tick(self):
+        if self.check_timer(0.5):
+            self.start_shoot()
+            if self.get_ball_count() == 0:
+                self.idle()
+                return Final(self.ros_node)
+        return self        
+
 
 class Final(State):
     """
@@ -215,8 +318,8 @@ def start(ros_node):
 
     ros_node.subscribe("/pathTable/status/path", Float32)
     ros_node.subscribe("/pathTable/status/point", Float32)
-    ros_node.subscribe("/auto/numBall", Float32)
     ros_node.subscribe("/pathTable/status/finishedPath", String)
+    ros_node.subscribe("/auto/numBall", Float32)
 
     # Return the wanted Start and Shutdown state
     return Idle, Shutdown

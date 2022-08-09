@@ -1,0 +1,8 @@
+[Unit]
+Description=Spark service
+[Service]
+ExecStart=/home/team624/robot2022-ros/scripts/camera_calib.sh
+Restart=always
+RestartSec=15s
+[Install]
+WantedBy=multi-user.target
