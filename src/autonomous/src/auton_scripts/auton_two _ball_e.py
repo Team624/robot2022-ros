@@ -82,7 +82,9 @@ class GoToSecondBall(StartPath):
         self.start_path(1)
 
     def tick(self):
-        return GoToHanger(self.ros_node)
+        if self.finished_path(1):
+            return GoToHanger(self.ros_node)
+        return self
 
 class GoToHanger(StartPath):
 
@@ -90,14 +92,12 @@ class GoToHanger(StartPath):
         self.log_state()
 
     def execute_action(self):
-        self.start_path(1)
+        self.start_path(2)
 
     def tick(self):
         return Hide(self.ros_node)
 
 class Hide(Shooter):
-
-    #I have no idea what this does
 
     def initialize(self):
         self.log_state()
@@ -107,11 +107,11 @@ class Hide(Shooter):
 
     def tick(self):
         if self.check_timer(1) and self.finished_path(2):
-            return RetractIntake4NoReason(self.ros_node)
+            return RetractIntake(self.ros_node)
         return self
 
 
-class RetractIntake4NoReason(Intake):
+class RetractIntake(Intake):
    
     def initialize(self):
         self.log_state()
