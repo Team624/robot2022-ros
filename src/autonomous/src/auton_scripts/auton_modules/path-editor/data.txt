@@ -6821,7 +6821,7 @@
             {
                 "id": 0,
                 "name": "Path 01",
-                "constants_kP": 5,
+                "constants_kP": 2,
                 "constants_kA": 5.5,
                 "constants_kB": 5.5,
                 "max_linear_speed": 20,
@@ -6958,7 +6958,7 @@
             {
                 "id": 1,
                 "name": "Path 11",
-                "constants_kP": 5,
+                "constants_kP": 4,
                 "constants_kA": 5.5,
                 "constants_kB": 5.5,
                 "max_linear_speed": 20,
@@ -7095,7 +7095,7 @@
             {
                 "id": 2,
                 "name": "Path 21",
-                "constants_kP": 5,
+                "constants_kP": 6,
                 "constants_kA": 5.5,
                 "constants_kB": 5.5,
                 "max_linear_speed": 20,
