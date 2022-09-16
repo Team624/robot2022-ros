@@ -66,11 +66,11 @@ class Shoot(Shooter):
         pass
 
     def tick(self):
+        #got rid of get_ball_count
         if self.check_timer(1):
             self.start_shoot()
-            if self.get_ball_count() == 0:
-                self.idle()
-                return GoToSecondBall(self.ros_node)
+            self.idle()
+            return GoToSecondBall(self.ros_node)
         return self
 
 class GoToSecondBall(StartPath):
