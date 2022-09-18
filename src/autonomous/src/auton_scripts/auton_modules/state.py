@@ -131,17 +131,6 @@ class SetIdle(State):
         self.ros_node.publish("/auto/shooter/state", String, shooter_state, latching = True)
         rospy.loginfo("Shooter Idle")
 
-        # Flywheel idle
-        flywheel_state = String()
-        flywheel_state.data = "idle"
-        self.ros_node.publish("/auto/flywheel/state", String, flywheel_state, latching = True)
-        rospy.loginfo("Flywheel Idle")
-
-        # Hood idle
-        hood_state = String()
-        hood_state.data = "idle"
-        self.ros_node.publish("/auto/hood/state", String, hood_state, latching = True)
-        rospy.loginfo("Hood Idle")
 
         # Path Idle
         self.ros_node.publish("/pathTable/startPathIndex", Float32, -1, latching = True)
@@ -256,51 +245,4 @@ class Shooter(State):
         self.ros_node.publish("/auto/shooter/state", String, shooter_state, latching = True)
         rospy.loginfo("Shooter Shooting")
 
-class Flywheel(Shooter):
 
-    # Conditions
-    def reached_rpm(self, rpm):
-        """ Checks if the fly wheel has reached the wanted rpm """
-        if self.ros_node.get_data("/auto/flywheel/current/rpm") == rpm:
-            return True
-        return False
-
-    # Actions (Only works if Shooter is in idle)
-    def idle_flywheel(self):
-        """ This puts the shooter into idle mode """
-        flywheel_state = String()
-        flywheel_state.data = "idle"
-
-        self.ros_node.publish("/auto/flywheel/state", String, flywheel_state, latching = True)
-        rospy.loginfo("Flywheel Idle")
-
-    def start_spin_up(self, rpm):
-        """ This starts the robot's spin up to a specific rpm """
-        flywheel_state = String()
-        flywheel_state.data = "spin_up"
-
-        flywheel_rpm = Float32()
-        flywheel_rpm.data = rpm
-
-        self.ros_node.publish("/auto/flywheel/state", String, flywheel_state, latching = True)
-        self.ros_node.publish("/auto/flywheel/wanted/rpm", Float32, flywheel_rpm, latching = True)
-        rospy.loginfo("Flywheel Spinup")
-
-class Hood(Shooter):
-
-    # Actions (Only works if Shooter is in idle)
-    def idle_hood(self):
-        """ This puts the hood into idle mode """
-        hood_state = String()
-        hood_state.data = "idle"
-
-        self.ros_node.publish("/auto/hood/state", String, hood_state, latching = True)
-        rospy.loginfo("Hood Idle")
-
-    def actuate_hood(self, angle):
-        """ This adjusts the hood to the given angle """
-        hood_state = String()
-        hood_state.data = "actuate"
-
-        self.ros_node.publish("/auto/hood/state", String, hood_state, latching = True)
-        rospy.loginfo("Hood Actuate")
