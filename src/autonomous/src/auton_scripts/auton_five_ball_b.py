@@ -312,6 +312,9 @@ def start(ros_node):
     ros_node.subscribe("/diff_drive/waypoints_achieved", BoolArray)
     ros_node.subscribe("/diff_drive/path_achieved", Bool)
 
+    ros_node.subscribe("/auto/turret/current/angle", Float32)
+    ros_node.subscribe("/auto/flywheel/current/rpm", Float32)
+    ros_node.subscribe("/auto/hood/current/angle", Float32)
 
     ros_node.subscribe("/pathTable/status/path", Float32)
     ros_node.subscribe("/pathTable/status/point", Float32)
