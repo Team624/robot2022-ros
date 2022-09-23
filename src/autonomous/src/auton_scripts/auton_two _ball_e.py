@@ -27,15 +27,14 @@ class DeployIntake(Intake):
         self.deploy_intake()
 
     def tick(self):
-        return MoveBack(self.ros_node)
+        return StartFirstPath(self.ros_node)
 
-class MoveBack(StartPath):
+class StartFirstPath(StartPath):
 
     def initialize(self):
         self.log_state()
 
     def execute_action(self):
-        #back up to pick up the ball
         self.start_path(0)
 
     def tick(self):
@@ -66,14 +65,13 @@ class Shoot(Shooter):
         pass
 
     def tick(self):
-        #got rid of get_ball_count
         if self.check_timer(1):
             self.start_shoot()
             self.idle()
-            return GoToSecondBall(self.ros_node)
+            return StartSecondPath(self.ros_node)
         return self
 
-class GoToSecondBall(StartPath):
+class StartSecondPath(StartPath):
 
     def initialize(self):
         self.log_state()
@@ -83,10 +81,10 @@ class GoToSecondBall(StartPath):
 
     def tick(self):
         if self.finished_path(1):
-            return GoToHanger(self.ros_node)
+            return StartThirdPath(self.ros_node)
         return self
 
-class GoToHanger(StartPath):
+class StartThirdPath(StartPath):
 
     def initialize(self):
         self.log_state()
