@@ -1,7 +1,7 @@
 import rospy
 from std_msgs.msg import Float32, Bool, String
 from diff_drive.msg import BoolArray
-from .auton_modules.state import SetIdle, State, StartPath, Intake, Shooter
+from .auton_modules.state import SetIdle, State, StartPath, Intake, Shooter, Color
 
 auton_id = 18
 auton_title = "Auton Two Ball E"
@@ -14,6 +14,17 @@ class Idle(SetIdle):
     def execute_action(self):
         self.setRobotPose()
         self.setIdle()
+
+    def tick(self):
+        return DisableColor(self.ros_node)
+
+class DisableColor(Color):
+
+    def initialize(self):
+        self.log_state()
+
+    def execute_action(self):
+        self.disable_color()
 
     def tick(self):
         return DeployIntake(self.ros_node)
