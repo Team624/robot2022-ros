@@ -14,6 +14,8 @@ auton_id = 10
 auton_title = "Auton Blank"
 
 # Start of our states
+
+
 class Idle(SetIdle):
     """
     The state which waits for autonomous to start
@@ -28,6 +30,7 @@ class Idle(SetIdle):
 
     def tick(self):
         return StartFirstPath(self.ros_node)
+
 
 class StartFirstPath(StartPath):
     """
@@ -62,6 +65,7 @@ class StartSecondPath(StartPath):
             return Final(self.ros_node)
         return self
 
+
 class Final(State):
     """
     The state which indicates that there are no limitations on device
@@ -77,6 +81,7 @@ class Final(State):
     def tick(self):
         return self
 
+
 class Shutdown(SetIdle):
     """
     The state which indicates that there are no limitations on device
@@ -91,6 +96,7 @@ class Shutdown(SetIdle):
 
     def tick(self):
         return self
+
 
 def start(ros_node):
     # Pick which topics to subscribe to

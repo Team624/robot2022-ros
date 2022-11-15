@@ -14,6 +14,7 @@ import math
 # Creates proxy node
 rospy.init_node('rviz_data')
 
+
 class RvizData:
 
     def __init__(self):
@@ -48,17 +49,19 @@ class RvizData:
         rospy.Subscriber(topic_name, data_type, self._on_new_data)
         self._subscribers.append(topic_name)
 
-    def publish(self, topic_name, data_type, data, queue = 10, latching = False):
+    def publish(self, topic_name, data_type, data, queue=10, latching=False):
         """ This publishes ros data """
         # Check if publisher exists, if not create and publish data
         if not topic_name in self._publishers:
-            self._publishers[topic_name] = rospy.Publisher(topic_name, data_type, queue_size=queue, latch=latching)
+            self._publishers[topic_name] = rospy.Publisher(
+                topic_name, data_type, queue_size=queue, latch=latching)
         self._publishers[topic_name].publish(data)
 
-    def get_data(self, topic_name, simple_data = True):
+    def get_data(self, topic_name, simple_data=True):
         """ This gets the subscribed ros data """
 
         if topic_name in self._data:
+
             if simple_data:
                 return self._data[topic_name].data
             else:
@@ -105,7 +108,7 @@ class RvizData:
             if ((self.get_data("/pose/x") or self.get_data("/pose/x") or self.get_data("/pose/x")) is not None):
                 odom.pose.pose.position.x = self.get_data("/pose/x")
                 odom.pose.pose.position.y = self.get_data("/pose/y")
-                quat = quaternion_from_euler(0,0,self.get_data("/pose/th"))
+                quat = quaternion_from_euler(0, 0, self.get_data("/pose/th"))
 
                 self.odom_broadcaster.sendTransform(
                     (self.get_data("/pose/x"), self.get_data("/pose/y"), 0.0),
@@ -122,7 +125,7 @@ class RvizData:
             else:
                 self.odom_broadcaster.sendTransform(
                     (0.0, 0.0, 0.0),
-                    quaternion_from_euler(0,0,0),
+                    quaternion_from_euler(0, 0, 0),
                     current_time,
                     "base_link",
                     "map"
@@ -130,7 +133,8 @@ class RvizData:
 
             self.publish("/rviz/odom", Odometry, odom)
             try:
-                (trans,rot) = self.listener.lookupTransform("/base_link", "/target", rospy.Time(0))
+                (trans, rot) = self.listener.lookupTransform(
+                    "/base_link", "/target", rospy.Time(0))
                 x = trans[0]
                 y = trans[1]
                 wanted_angle = math.atan2(y, x) * (180/math.pi)
@@ -144,6 +148,7 @@ class RvizData:
 
             # Sleeps to meet specified rate
             r.sleep()
+
 
 rviz_node = RvizData()
 rviz_node.main()

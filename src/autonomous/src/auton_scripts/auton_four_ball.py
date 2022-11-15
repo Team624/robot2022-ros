@@ -14,6 +14,8 @@ auton_id = 3
 auton_title = "Auton Four Ball"
 
 # Start of our states
+
+
 class Idle(SetIdle):
     """
     The state which waits for autonomous to start
@@ -29,6 +31,7 @@ class Idle(SetIdle):
     def tick(self):
         return StartFirstPath(self.ros_node)
 
+
 class StartFirstPath(StartPath):
     """
     The state which publishes the first path to follow
@@ -40,8 +43,9 @@ class StartFirstPath(StartPath):
     def execute_action(self):
         self.start_path(0)
 
-    def tick(self):       
+    def tick(self):
         return DeployIntake(self.ros_node)
+
 
 class DeployIntake(Intake):
     """
@@ -56,6 +60,7 @@ class DeployIntake(Intake):
 
     def tick(self):
         return Prime1(self.ros_node)
+
 
 class Prime1(Shooter):
     """
@@ -72,6 +77,7 @@ class Prime1(Shooter):
         if self.check_timer(0.3) and self.finished_path(0):
             return Shoot1(self.ros_node)
         return self
+
 
 class Shoot1(Shooter):
     """
@@ -92,6 +98,7 @@ class Shoot1(Shooter):
             return StartSecondPath(self.ros_node)
         return self
 
+
 class StartSecondPath(StartPath):
     """
     The state which publishes the first path to follow
@@ -107,6 +114,7 @@ class StartSecondPath(StartPath):
         if self.check_timer(1):
             return StartThirdPath(self.ros_node)
         return self
+
 
 class StartThirdPath(StartPath):
     """
@@ -124,6 +132,7 @@ class StartThirdPath(StartPath):
             return StartFourthPath(self.ros_node)
         return self
 
+
 class StartFourthPath(StartPath):
     """
     The state which publishes the first path to follow
@@ -140,6 +149,7 @@ class StartFourthPath(StartPath):
             return Prime2(self.ros_node)
         return self
 
+
 class Prime2(Shooter):
     """
     The state which publishes the first path to follow
@@ -155,6 +165,7 @@ class Prime2(Shooter):
         if self.check_timer(0.5) and self.finished_path(3):
             return Shoot2(self.ros_node)
         return self
+
 
 class Shoot2(Shooter):
     """
@@ -174,6 +185,7 @@ class Shoot2(Shooter):
             return Final(self.ros_node)
         return self
 
+
 class Final(State):
     """
     The state which indicates that there are no limitations on device
@@ -189,6 +201,7 @@ class Final(State):
     def tick(self):
         return self
 
+
 class Shutdown(SetIdle):
     """
     The state which indicates that there are no limitations on device
@@ -203,6 +216,7 @@ class Shutdown(SetIdle):
 
     def tick(self):
         return self
+
 
 def start(ros_node):
     # Pick which topics to subscribe to
