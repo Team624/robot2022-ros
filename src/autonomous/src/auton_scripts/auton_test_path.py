@@ -7,12 +7,12 @@ import time
 from .auton_modules.path import AutoPath, AutoGoal
 from diff_drive.msg import Goal, GoalPath, Constants, Linear, Angular, BoolArray
 
-from .auton_modules.state import SetIdle, State, StartPath, Intake, Shooter, Hood, Flywheel
+from .auton_modules.state import SetIdle, State, StartPath, Intake, Shooter, Hood, Flywheel, Color
 
 
 # The id of the auton, used for picking auton
-auton_id = 19
-auton_title = "Auton One Ball C Tarmac"
+auton_id = 12
+auton_title = "Test path"
 
 # Start of our states
 class Idle(SetIdle):
@@ -28,39 +28,7 @@ class Idle(SetIdle):
         self.setIdle()
 
     def tick(self):
-        return DeployIntake(self.ros_node)
-
-
-class DeployIntake(Intake):
-    """
-    The state which waits for the second waypoint of the path.
-    """
-
-    def initialize(self):
-        self.log_state()
-
-    def execute_action(self):
-        self.deploy_intake()
-
-    def tick(self):
-        return RetractIntake(self.ros_node)
-
-
-class RetractIntake(Intake):
-    """
-    The state which publishes the first path to follow
-    """
-
-    def initialize(self):
-        self.log_state()
-
-    def execute_action(self):
-        self.retract_intake()
-
-    def tick(self):
-        if self.check_timer(8):
-            return StartFirstPath(self.ros_node)
-        return self
+        return StartFirstPath(self.ros_node)
 
 class StartFirstPath(StartPath):
     """
@@ -68,48 +36,14 @@ class StartFirstPath(StartPath):
     """
 
     def initialize(self):
+        print("Hello 59")
         self.log_state()
 
     def execute_action(self):
         self.start_path(0)
 
     def tick(self):
-        if self.check_timer(0.5):
-            return Prime(self.ros_node)
-        return self
-
-class Prime(Shooter):
-    """
-    The state which publishes the first path to follow
-    """
-
-    def initialize(self):
-        self.log_state()
-
-    def execute_action(self):
-        self.start_prime()
-
-    def tick(self):
-        if self.check_timer(0.5) and self.finished_path(0):
-            return Shoot(self.ros_node)
-        return self
-
-class Shoot(Shooter):
-    """
-    The state which publishes the first path to follow
-    """
-
-    def initialize(self):
-        self.log_state()
-
-    def execute_action(self):
-        pass
-
-    def tick(self):
-        if self.check_timer(0.7):
-            self.start_shoot()
-        if self.get_ball_count() == 0:
-            self.idle()
+        if self.finished_path(0) and self.check_timer(10):
             return Final(self.ros_node)
         return self
 

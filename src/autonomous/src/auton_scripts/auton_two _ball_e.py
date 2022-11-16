@@ -3,7 +3,7 @@ from std_msgs.msg import Float32, Bool, String
 from diff_drive.msg import BoolArray
 from .auton_modules.state import SetIdle, State, StartPath, Intake, Shooter, Color
 
-auton_id = 18
+auton_id = 11
 auton_title = "Auton Two Ball E"
 
 class Idle(SetIdle):
@@ -63,7 +63,7 @@ class Prime(Shooter):
 
     def tick(self):
         #wait till ready to shoot
-        if self.check_timer(1) and self.finished_path(0):
+        if self.finished_path(0):
             return Shoot(self.ros_node)
         return self
 
@@ -78,9 +78,10 @@ class Shoot(Shooter):
     def tick(self):
         if self.check_timer(.4):
             self.start_shoot()
-        if self.check_timer(1.2):
-            self.idle()
-            return StartSecondPath(self.ros_node)
+            if self.check_timer(1.2):
+                print("Hello 1")
+                self.idle()
+                return StartSecondPath(self.ros_node)
         return self
 
 class StartSecondPath(StartPath):
@@ -89,10 +90,12 @@ class StartSecondPath(StartPath):
         self.log_state()
 
     def execute_action(self):
+        print("Hello 2")
         self.start_path(1)
 
     def tick(self):
         if self.finished_path(1):
+            print("Hello 3")
             return StartThirdPath(self.ros_node)
         return self
 
@@ -105,7 +108,9 @@ class StartThirdPath(StartPath):
         self.start_path(2)
 
     def tick(self):
-        return Hide(self.ros_node)
+        if self.finished_path(2):
+            return RetractIntake(self.ros_node)
+        return self
 
 class Hide(Shooter):
 
@@ -116,8 +121,8 @@ class Hide(Shooter):
         self.hide_poop()
 
     def tick(self):
-        if self.check_timer(1) and self.finished_path(2):
-            return RetractIntake(self.ros_node)
+        if self.check_timer(1):
+            return Final(self.ros_node)
         return self
 
 
@@ -130,7 +135,7 @@ class RetractIntake(Intake):
         self.retract_intake()
 
     def tick(self):
-        return Final(self.ros_node)
+        return Hide(self.ros_node)
 
 
 class Final(State):

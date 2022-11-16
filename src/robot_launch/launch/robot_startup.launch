@@ -1,9 +1,9 @@
 <launch>
 
-    <node pkg="vision_targeting" type="vision_targeting.py" name="vision_targeting"  output="screen">
+    <!-- <node pkg="vision_targeting" type="vision_targeting.py" name="vision_targeting"  output="screen">
         <rosparam command="load" file="$(find vision_targeting)/config/vision_targeting.yaml"/>
         <param name="image_type" value="Image"/>
-    </node>    
+    </node>     -->
 
     <!-- <node pkg="vision_ball" type="vision_ball.py" name="vision_ball"  output="screen">
         <rosparam command="load" file="$(find vision_ball)/config/vision_ball.yaml"/>
@@ -12,6 +12,7 @@
     <include file="$(find autonomous)/launch/autonomous.launch" />
     <!-- Checked -->
     <include file="$(find robot_pid)/launch/robot_pid.launch" />
+    <include file="$(find vision_apriltags)/launch/vision_apriltags.launch" />
     <!-- Checked -Fix vision targetting file from unity -->
     <!-- Proxy -->
     <include file="$(find proxy)/launch/proxy.launch" />

@@ -11,7 +11,7 @@ from .auton_modules.state import SetIdle, State, StartPath, Intake, Shooter, Hoo
 
 
 # The id of the auton, used for picking auton
-auton_id = 11
+auton_id = 18
 auton_title = "Auton Three Ball B"
 
 # Start of our states

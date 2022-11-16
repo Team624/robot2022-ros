@@ -1,0 +1,5 @@
+<launch>
+  <node pkg="vision_apriltags" type="vision_apriltags.py" name="vision_apriltags"  output="screen">
+    <rosparam command="load" file="$(find vision_apriltags)/config/vision_apriltags.yaml"/>
+  </node>
+</launch>
