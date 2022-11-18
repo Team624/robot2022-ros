@@ -1,2 +1,2 @@
-calibration_file: calibration.npz
+calibration_file: /home/team624/robot2022-ros/src/vision_apriltags/src/calibration.npz
 video_dev: 0
