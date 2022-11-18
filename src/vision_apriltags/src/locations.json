@@ -1,0 +1,194 @@
+{
+    "0": {
+        "Location": "Blue Hangar Panel",
+        "X": -0.139,
+        "Y": 298.383,
+        "Z": 34.876,
+        "Z-Rot": 0,
+        "Y-Rot": 0
+    },
+    "1": {
+        "Location": "Blue Hangar Truss - Hub",
+        "X": 127.272,
+        "Y": 216.01,
+        "Z": 67.932,
+        "Z-Rot": 0,
+        "Y-Rot": 0
+    },
+    "2": {
+        "Location": "Blue Hangar Truss - Side",
+        "X": 120.78,
+        "Y": 209.863,
+        "Z": 54.182,
+        "Z-Rot": -90,
+        "Y-Rot": 0
+    },
+    "3": {
+        "Location": "Blue Station 2 Wall",
+        "X": 0.157,
+        "Y": 199.155,
+        "Z": 31.75,
+        "Z-Rot": 0,
+        "Y-Rot": 0
+    },
+    "4": {
+        "Location": "Blue Station 3 Wall",
+        "X": 0.157,
+        "Y": 138.287,
+        "Z": 31.75,
+        "Z-Rot": 0,
+        "Y-Rot": 0
+    },
+    "5": {
+        "Location": "Blue Terminal Near Station",
+        "X": 4.768,
+        "Y": 67.631,
+        "Z": 35.063,
+        "Z-Rot": 46.25,
+        "Y-Rot": 0
+    },
+    "6": {
+        "Location": "Blue Mid Terminal",
+        "X": 34.382,
+        "Y": 37.059,
+        "Z": 35.063,
+        "Z-Rot": 46.25,
+        "Y-Rot": 0
+    },
+    "7": {
+        "Location": "Blue End Terminal",
+        "X": 63.586,
+        "Y": 6.191,
+        "Z": 35.063,
+        "Z-Rot": 46.25,
+        "Y-Rot": 0
+    },
+    "10": {
+        "Location": "Red Hangar Panel",
+        "X": 648.139,
+        "Y": 25.617,
+        "Z": 34.876,
+        "Z-Rot": 180,
+        "Y-Rot": 0
+    },
+    "11": {
+        "Location": "Red Hangar Truss - Hub",
+        "X": 521.063,
+        "Y": 108.01,
+        "Z": 67.932,
+        "Z-Rot": 180,
+        "Y-Rot": 0
+    },
+    "12": {
+        "Location": "Red Hangar Truss - Side",
+        "X": 527.22,
+        "Y": 114.167,
+        "Z": 54.182,
+        "Z-Rot": 90,
+        "Y-Rot": 0
+    },
+    "13": {
+        "Location": "Red Station 2 Wall",
+        "X": 647.843,
+        "Y": 125.02,
+        "Z": 31.75,
+        "Z-Rot": 180,
+        "Y-Rot": 0
+    },
+    "14": {
+        "Location": "Red Station 3 Wall",
+        "X": 647.843,
+        "Y": 185.714,
+        "Z": 31.75,
+        "Z-Rot": 180,
+        "Y-Rot": 0
+    },
+    "15": {
+        "Location": "Red Terminal Near Station",
+        "X": 643.111,
+        "Y": 256.495,
+        "Z": 35.188,
+        "Z-Rot": 223.8,
+        "Y-Rot": 0
+    },
+    "16": {
+        "Location": "Red Mid Terminal",
+        "X": 613.799,
+        "Y": 287.114,
+        "Z": 35.063,
+        "Z-Rot": 223.8,
+        "Y-Rot": 0
+    },
+    "17": {
+        "Location": "Red End Terminal",
+        "X": 584.535,
+        "Y": 317.682,
+        "Z": 35.063,
+        "Z-Rot": 223.8,
+        "Y-Rot": 0
+    },
+    "40": {
+        "Location": "Lower Hub Far Exit",
+        "X": 310.005,
+        "Y": 193.432,
+        "Z": 27.688,
+        "Z-Rot": 114,
+        "Y-Rot": 0
+    },
+    "41": {
+        "Location": "Lower Hub Blue Exit",
+        "X": 292.568,
+        "Y": 148.005,
+        "Z": 27.688,
+        "Z-Rot": 204,
+        "Y-Rot": 0
+    },
+    "42": {
+        "Location": "Lower Hub Near Exit",
+        "X": 337.995,
+        "Y": 130.568,
+        "Z": 27.688,
+        "Z-Rot": -66,
+        "Y-Rot": 0
+    },
+    "43": {
+        "Location": "Lower Hub Red Exit",
+        "X": 355.432,
+        "Y": 175.995,
+        "Z": 27.688,
+        "Z-Rot": 24,
+        "Y-Rot": 0
+    },
+    "50": {
+        "Location": "Upper Hub Far-Blue",
+        "X": 302.324,
+        "Y": 170.321,
+        "Z": 95.186,
+        "Z-Rot": 159,
+        "Y-Rot": 26.75
+    },
+    "51": {
+        "Location": "Upper Hub Blue-Near",
+        "X": 315.679,
+        "Y": 140.324,
+        "Z": 95.186,
+        "Z-Rot": 339,
+        "Y-Rot": 26.75
+    },
+    "52": {
+        "Location": "Upper Hub Near-Red",
+        "X": 345.676,
+        "Y": 153.679,
+        "Z": 95.186,
+        "Z-Rot": 249,
+        "Y-Rot": 26.75
+    },
+    "53": {
+        "Location": "Upper Hub Red-Far",
+        "X": 332.321,
+        "Y": 183.676,
+        "Z": 95.186,
+        "Z-Rot": 69,
+        "Y-Rot": 26.75
+    }
+}
