@@ -9,12 +9,15 @@ import rospy
 from std_msgs.msg import String
 from std_msgs.msg import Float32, Float64, Bool
 import json
+import rospkg
 
 rospy.init_node('vision_apriltags', anonymous=True)
 
 
 class VisionApriltags:
     def __init__(self):
+        rospack = rospkg.RosPack()
+        
         self.rotation_pub = rospy.Publisher(
             "/apriltags/pose_est", Float32, queue_size=1)
 
@@ -37,14 +40,15 @@ class VisionApriltags:
 
         self.height = 26 
         self.camera_angle = 33
-        self.data = json.load(open('locations.json'))
-        print(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH), self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT), self.cap.get(cv2.CAP_PROP_FPS))
+        self.locations = json.load(open(rospack.get_path('vision_apriltags') + "/src/locations.json"))
 
         if not self.cap.isOpened():
             raise IOError("Could not open webcam!")
+        
+        # print(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH) + "x" + self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT) + "@" + self.cap.get(cv2.CAP_PROP_FPS) + "FPS")
 
         options = apriltag.DetectorOptions(
-            families='tag16h5',
+            families='tag36h11',
             border=10,
             nthreads=6,
             quad_decimate=1.0,
@@ -54,66 +58,77 @@ class VisionApriltags:
             refine_pose=True,
             debug=False,
             quad_contours=True)
+        
         tag_size = 6
 
-        self.axis_const = [
-                            [-tag_size / 2, -tag_size / 2, 0], 
-                            [-tag_size / 2, tag_size / 2, 0], 
-                            [tag_size / 2, tag_size / 2, 0], 
-                            [tag_size / 2, -tag_size / 2, 0]
-        ]
+        self.axis_const = np.mat([
+                            [0, -tag_size / 2, -tag_size / 2,], 
+                            [0, -tag_size / 2, tag_size / 2,], 
+                            [0, tag_size / 2, tag_size / 2,], 
+                            [0, tag_size / 2, -tag_size / 2,]
+        ])
 
         self.detector = apriltag.Detector(options)
+    
+        
+        with np.load(rospack.get_path('vision_apriltags') + "/src/" + rospy.get_param("~calibration_file")) as data:
+            self.mtx = data['arr_0']
+            self.dist = data['arr_1']
+            self.newcameramtx = data['arr_2']
+            self.roi = data['arr_3']
 
     def main(self):
-
-        with np.load(rospy.get_param("~calibration_file")) as data:
-            mtx = data['arr_0']
-            dist = data['arr_1']
-            newcameramtx = data['arr_2']
-            roi = data['arr_3']
-
-        while True:
+        while not rospy.is_shutdown():
             _, frame = self.cap.read()
-            frame = cv2.undistort(frame, mtx, dist, None, newcameramtx)
+            frame = cv2.undistort(frame, self.mtx, self.dist, None, self.newcameramtx)
 
-            x, y, w, h = roi
+            x, y, w, h = self.roi
             frame = frame[y:y+h, x:x+w]
 
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
             results = self.detector.detect(gray)
+            
+            imgpts = []
+            objpts = []
+            tags = []
 
             for r in results:
-                # if r.pose_err > 1:
-                #     continue
-
                 if r.decision_margin < 2:
                     continue
-
-                # print(r.decision_margin)
                 
-                print(r.corners)
-                id = str(r.tag_id)
-                _, rVec, tVec = cv2.solvePnP(self.get_axis(self.data[id]), np.mat(r.corners), mtx, dist)
-                Rt = np.mat(cv2.Rodrigues(rVec)[0])
-                R = Rt.transpose()
-                pos = -R * tVec
-                print(self.data[id]["Location"])
-                print(pos)
-                print(R)
-
-    def get_axis(self, data):
-        axis = []
-        for [x,y,z] in self.axis_const:
-            axis.append(
-                [
-                    x+data['X'],
-                    y+data['Y'],
-                    z+data['Z']-self.height,
-                ]
-            )
-        return np.float32(axis)
+                imgpts.extend(r.corners)
+                objpts.extend(self.get_points(r.tag_id).tolist())
+                
+                tags.append(r.tag_id)
+                
+                # print(R)
+                
+            print(imgpts)
+            print(objpts)
+            
+            if (len(tags) == 0):
+                print("No tags detected!")
+                continue
+                
+                
+            print("Detecting tags", tags)
+            
+            _, rVec, tVec = cv2.solvePnP(np.mat(objpts), np.mat(imgpts), self.mtx, self.dist)
+            Rt = np.mat(cv2.Rodrigues(rVec)[0])
+            R = Rt.transpose()
+            pos = -R * tVec
+            
+            print(pos)
+            
+    def get_points(self, id):
+        data = self.locations[str(id)]
+                
+        adjusted_pose = self.axis_const + np.array([data["X"], data["Z"], data["Y"]])
+                
+        return adjusted_pose
+        # return self.axis_const
+        
 
 
 if __name__ == '__main__':
