@@ -13,18 +13,17 @@ import rospkg
 
 rospy.init_node('vision_apriltags', anonymous=True)
 
-
 class VisionApriltags:
     def __init__(self):
         rospack = rospkg.RosPack()
         
-        self.rotation_pub = rospy.Publisher(
-            "/apriltags/pose_est", Float32, queue_size=1)
-
+        self.x_pub = rospy.Publisher("/apriltags/pose/x", Float32, queue_size=1)
+        self.y_pub = rospy.Publisher("/apriltags/pose/y", Float32, queue_size=1)
+        self.heading_pub = rospy.Publisher("/apriltags/pose/heading", Float32, queue_size=1)
+        
         video_dev = int(rospy.get_param("~video_dev", 0))
         self.cap = cv2.VideoCapture(video_dev + cv2.CAP_V4L)
         
-
         self.cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter.fourcc('M', 'J', 'P', 'G'))
         self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
         self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
@@ -111,15 +110,28 @@ class VisionApriltags:
                 
             print("Detecting tags", tags)
             
-            _, rVec, tVec = cv2.solvePnP(np.mat(objpts), np.mat(imgpts), self.mtx, None)
+            _, rVec, tVec = cv2.solvePnP(np.mat(objpts), np.mat(imgpts), self.mtx, self.dist)
             Rt = np.mat(cv2.Rodrigues(rVec)[0])
             R = Rt.transpose()
             pos = -R * tVec
             
             # print(R)
-            print(rVec)
+            # print(rVec)
             # print(Rt)
-            print(pos)
+            # print(pos)
+            
+            self.publish_data(pos, 0)
+                        
+    def publish_data(self, pos, heading):
+        x = Float32()
+        y = Float32()
+        heading = Float32()
+        
+        x.data = pos[0]
+        y.data = pos[2]
+        
+        self.x_pub.publish(x)
+        self.y_pub.publish(y)
             
     def get_points(self, id):
         data = self.locations[str(id)]
