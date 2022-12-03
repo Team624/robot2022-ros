@@ -17,7 +17,11 @@ output_data: [{name: "/auto/shooter/state", type: "string", default: "idle"},
               {name: "/ball/rotationAngle", type: "number", default: 0.0},
               {name: "/ball/ballArea", type: "number", default: 0.0},
               {name: "/auto/intake/state", type: "string", default: "retract"},
-              {name: "/auto/color/state", type: "string", default: "enable"}]
+              {name: "/auto/color/state", type: "string", default: "enable"}
+              {name: "/apriltags/pose/x", type: "number", default: 0.0}
+              {name: "/apriltags/pose/y", type: "number", default: 0.0}
+              {name: "/apriltags/pose/heading", type: "number", default: 0.0}
+              ]
 
 # Wanted Input Data ("number", "string", "boolean")
 input_data: [{name: "/auto/state", type: "boolean", default: false}, 

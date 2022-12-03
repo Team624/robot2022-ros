@@ -82,8 +82,8 @@ class VisionApriltags:
             _, frame = self.cap.read()
             frame = cv2.undistort(frame, self.mtx, self.dist, None, self.newcameramtx)
 
-            x, y, w, h = self.roi
-            frame = frame[y:y+h, x:x+w]
+            # x, y, w, h = self.roi
+            # frame = frame[y:y+h, x:x+w]
 
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
@@ -103,22 +103,22 @@ class VisionApriltags:
                 tags.append(r.tag_id)
                 
                 # print(R)
-                
-            print(imgpts)
-            print(objpts)
             
             if (len(tags) == 0):
                 print("No tags detected!")
                 continue
-                
+            
                 
             print("Detecting tags", tags)
             
-            _, rVec, tVec = cv2.solvePnP(np.mat(objpts), np.mat(imgpts), self.mtx, self.dist)
+            _, rVec, tVec = cv2.solvePnP(np.mat(objpts), np.mat(imgpts), self.mtx, None)
             Rt = np.mat(cv2.Rodrigues(rVec)[0])
             R = Rt.transpose()
             pos = -R * tVec
             
+            # print(R)
+            print(rVec)
+            # print(Rt)
             print(pos)
             
     def get_points(self, id):
